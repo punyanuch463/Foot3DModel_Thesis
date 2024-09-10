@@ -1,0 +1,24 @@
+{
+  "name": "project-foot3d-model",
+  "version": "0.1.0",
+  "private": true,
+  "scripts": {
+    "dev": "next dev -p 3002",
+    "start": "set SET NODE_OPTIONS=--openssl-legacy-provider && react-scripts start",
+    "build": "set SET NODE_OPTIONS=--openssl-legacy-provider && react-scripts build",
+    "lint": "next lint"
+  },
+  "dependencies": {
+    "@tensorflow-models/coco-ssd": "^2.2.3",
+    "@tensorflow/tfjs": "^4.21.0",
+    "crypto-browserify": "^3.12.0",
+    "next": "11.0.1",
+    "react": "17.0.2",
+    "react-dom": "17.0.2",
+    "webpack": "^5.94.0"
+  },
+  "devDependencies": {
+    "eslint": "7.31.0",
+    "eslint-config-next": "11.0.1"
+  }
+}

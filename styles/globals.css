@@ -1,0 +1,41 @@
+
+a {
+  color: inherit;
+  text-decoration: none;
+}
+
+/* globals.css */
+
+@import url('https://fonts.googleapis.com/css2?family=Sukhumvit+Set&display=swap');
+
+html,body {
+  font-family: "Sukhumvit Set", sans-serif;
+  background-color: #fefaf6;
+  margin: 0;
+  padding: 0;
+}
+
+/* .container {
+  padding: 20px;
+  max-width: 400px;
+  margin: auto;
+  background: transparent;
+  border-radius: 8px;
+} */
+
+h1 {
+  font-size: 24px;
+  margin-bottom: 20px;
+  color: #333;
+  font-family: "Sukhumvit Set", sans-serif;
+}
+
+.subtitle {
+  font-family: "Sukhumvit Set", sans-serif;
+  margin-bottom: 24px;
+}
+
+.subtitle a {
+  color: #102c57;
+  font-weight: 700;
+}
