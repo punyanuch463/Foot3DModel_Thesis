@@ -43,7 +43,7 @@ export default function About() {
     <div className={styles.container}>
       <h2 className={styles.title}>About Page</h2>
       <p className={styles.description}>
-        Lorem Ipsum is simply dummy text of the printing and typesetting industry...
+      Hellol world 
       </p>
       {capturedImage && frameImage && (
         <div className={styles.imageContainer}>
