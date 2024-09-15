@@ -125,15 +125,15 @@ const FootSizeForm = () => {
         </div>
         <div className={styles['foot-size-form__buttons']}>
         <button type="button" onClick={() => setFootMeasurements({
-            A: '',
-            B: '',
-            C: '',
-            D: '',
-            E: '',
-            F: '',
-            G: '',
-            H: '',
-            I: '',
+          A: '12',
+          B: '32',
+          C: '15',
+          D: '16',
+          E: '17',
+          F: '18',
+          G: '19',
+          H: '20.5',
+          I: '30',
           })}>แก้ไข</button>
           <button type="submit">ยืนยัน</button>
         
