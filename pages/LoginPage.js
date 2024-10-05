@@ -20,7 +20,7 @@ const Login = () => {
   const togglePasswordVisibility = () => {
     setPasswordVisible(!passwordVisible);
   };
-   
+  
   const handleChange = (e) => {
     const { name, value } = e.target;
     setFormData({
