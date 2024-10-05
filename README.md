@@ -1,4 +1,4 @@
-# Foot3DModel_Thesis
+![image](https://github.com/user-attachments/assets/3dced5a0-8daa-41b6-b6ae-f3702e8eb068)# Foot3DModel_Thesis
 
 ## วิธี start เด้อ
 
@@ -112,5 +112,25 @@ https://myaccount.google.com/u/2/apppasswords?pli=1&rapt=AEjHL4Mf2I6NlR6_Kb9U-pu
 
  
 ![image](https://github.com/user-attachments/assets/dfa6219c-ae64-4f13-b838-bfafe84d8316)
+
+
+
+
+## set db ของ mysql
+
+[db.js]
+
+![image](https://github.com/user-attachments/assets/2fff2786-6ea9-4d63-838c-6a7ce88b484a)
+
+
+เปลี่ยนในนี้เลยย
+
+      const db = mysql.createPool({
+        host: 'localhost', // ชื่อโฮสต์ของฐานข้อมูล
+        user: 'root', // ชื่อผู้ใช้ของ MySQL
+        password: 'เปลี่ยนเป็นของตัวเองงง', // รหัสผ่านของ MySQL
+        database: 'foot3dmodel' // ชื่อฐานข้อมูล
+      });
+
 
 
