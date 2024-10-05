@@ -1,4 +1,4 @@
-![image](https://github.com/user-attachments/assets/3dced5a0-8daa-41b6-b6ae-f3702e8eb068)# Foot3DModel_Thesis
+# Foot3DModel_Thesis
 
 ## วิธี start เด้อ
 
