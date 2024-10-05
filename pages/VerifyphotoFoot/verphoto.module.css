@@ -1,0 +1,121 @@
+/* About.module.css */
+.container {
+  text-align: center;
+ 
+    padding: 5rem 0;
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+  
+  
+}
+.footer {
+  margin-top: 150px;
+  display: flex;
+  justify-content: space-evenly;
+  
+
+}
+.verityfoot{
+  margin-top: 50px;
+  text-align: center;
+  color: #139e41;
+}
+.title {
+font-size: 24px;
+  color: #333;
+  margin-top: 10px;
+  text-align: center
+}
+
+.description {
+  margin: 20px 0;
+}
+
+.imageContainer {
+  position: relative;
+  display: inline-block;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 20px;
+  border-radius: 10px;
+}
+
+.frameContainer {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 20px;
+  border-radius: 10px;
+  position: relative;
+  object-fit: contain;
+}
+
+.frameImage {
+  
+  width: 250px;
+  height: 350px;
+  position: absolute;
+  background-color: transparent;
+  margin: 20px;
+}
+.capturedImage {
+  object-fit: cover;
+  margin: 20px;
+  width: 250px;
+  height: 350px;
+}
+.backButton {
+  margin-top: 44px;
+  left: 0;
+  margin: 10px;
+  background: none;
+  border: none;
+  cursor: pointer;
+  padding: 0;
+}
+
+.capture {
+  background-color: #4CAF50; /* Green */
+  border: none;
+  color: white;
+  padding: 15px 32px;
+  text-align: center;
+  text-decoration: none;
+  display: inline-block;
+  font-size: 16px;
+  margin: 4px 2px;
+  border-radius: 4px;
+  cursor: pointer;
+}
+
+.confirm {
+  background-color: #102C57; /* Blue */
+
+  color: white;
+  padding: 4px 32px;
+  text-align: center;
+  text-decoration: none;
+  display: inline-block;
+  font-size: 16px;
+  margin: 4px 2px;
+  border-radius: 10px;
+  cursor: pointer;
+}
+
+.retake {
+  background-color: #ffffff; /* Red */
+  color: rgb(37, 4, 95);
+  padding: 10px 22px;
+  text-align: center;
+  text-decoration: none;
+  display: inline-block;
+  font-size: 16px;
+  margin: 4px 2px;
+  border-radius: 10px;
+  cursor: pointer;
+}
+
