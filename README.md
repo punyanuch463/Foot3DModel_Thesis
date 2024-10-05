@@ -2,13 +2,16 @@
 
 ## วิธี start เด้อ
 
+- ตัว node_modules ได้อัปไปเเล้วว npm install อาจจะไม่ต้อง
+
 ```
+
 npm install react-icons
 npm install @fortawesome/react-fontawesome @fortawesome/free-solid-svg-icons
- npm install @fortawesome/free-solid-svg-icons
+npm install @fortawesome/free-solid-svg-icons
 npm install react-datepicker
 npm install @fortawesome/free-regular-svg-icons
-  npm install jsonwebtoken  
+npm install jsonwebtoken  
 npm install  nodemailer 
 
 $env:NODE_OPTIONS="--openssl-legacy-provider"
