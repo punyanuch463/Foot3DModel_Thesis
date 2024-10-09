@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { useState ,useEffect } from "react";
 import { useRouter } from 'next/router';
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import {
@@ -12,11 +12,18 @@ import {
 const Login = () => {
   const [passwordVisible, setPasswordVisible] = useState(false);
   const router = useRouter();
+  const { userId } = router.query; // รับ UserId จาก query params
   const [formData, setFormData] = useState({
     usernameOrEmail: '',
     UserPassWord: '',
   });
+
+
   const [message, setMessage] = useState('');
+
+  useEffect(() => {
+  }, [userId, router]);
+
   const togglePasswordVisibility = () => {
     setPasswordVisible(!passwordVisible);
   };
@@ -46,17 +53,21 @@ const Login = () => {
         headers: {
           'Content-Type': 'application/json',
         },
-        body: JSON.stringify(formData),
+        body: JSON.stringify({
+        ...formData, // ส่งข้อมูลล็อกอิน
+        }),
       });
 
       const data = await res.json();
 
       if (res.ok) {
+        const userId = data.UserId; // ตรวจสอบให้แน่ใจว่า API ส่งกลับ UserId
+
         alert('เข้าสู่ระบบสำเร็จ! กำลังนำทางไปยังหน้า Homepage...');
         // setMessage('เข้าสู่ระบบสำเร็จ! กำลังนำทางไปยังหน้า Homepage...');
         // นำทางไปยังหน้า Homepage หลังจากเข้าสู่ระบบสำเร็จ
         setTimeout(() => {
-          router.push(`/HomePage`);
+          router.push(`/HomePage?UserId=${userId}`);
         }, 2000);
       } else {
         setMessage(`เกิดข้อผิดพลาด: ${data.message}`);
@@ -77,6 +88,7 @@ const Login = () => {
       />
       <h1>เข้าสู่ระบบ</h1>
       {message && <p className="alert">{message}</p>}
+
       <div className="subtitle">
         <span>ยังไม่มีบัญชี? </span>
         <a href="/">สร้างบัญชี</a>

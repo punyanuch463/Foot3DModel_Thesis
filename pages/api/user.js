@@ -1,20 +1,48 @@
-// pages/api/users.js
-
-import db from './db'; // นำเข้าการเชื่อมต่อจาก /api/db.js
+// pages/api/user.js
+import db from './db'; // Adjust the path according to your project structure
 
 export default async function handler(req, res) {
   if (req.method === 'GET') {
-    try {
-      // Query ดึงข้อมูลจากตาราง User
-      const [users] = await db.query('SELECT * FROM User');
+    const { UserId } = req.query;
 
-      // ส่งข้อมูลกลับในรูป JSON
-      res.status(200).json(users);
+    if (!UserId) {
+      return res.status(400).json({ message: "UserId is required." });
+    }
+
+    // Fetch user data logic for GET
+    try {
+      const userData = await db.query('SELECT * FROM User WHERE UserId = ?', [UserId]);
+      if (userData.length === 0) {
+        return res.status(404).json({ message: "User not found." });
+      }
+      console.log("testGet" + userData[0]);
+      return res.status(200).json(userData[0]);
     } catch (error) {
       console.error(error);
-      res.status(500).json({ message: 'Error fetching users' });
+      return res.status(500).json({ message: "Internal server error." });
+    }
+  } else if (req.method === 'POST') {
+    const { UserId } = req.body;
+
+    if (!UserId) {
+      return res.status(400).json({ message: "UserId is required." });
+    }
+
+    // Fetch user data logic for POST
+    try {
+      const userData = await db.query('SELECT * FROM User WHERE UserId = ?', [UserId]);
+      if (userData.length === 0) {
+        return res.status(404).json({ message: "User not found." });
+      }
+      console.log("testPost" , userData[0]);
+      return res.status(200).json(userData[0]);
+    } catch (error) {
+      console.error(error);
+      return res.status(500).json({ message: "Internal server error." });
     }
   } else {
-    res.status(405).json({ message: 'Method not allowed' });
+    // Handle other methods (if any)
+    res.setHeader('Allow', ['GET', 'POST']);
+    return res.status(405).end(`Method ${req.method} Not Allowed`);
   }
 }

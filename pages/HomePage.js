@@ -7,10 +7,10 @@ import { useRouter } from 'next/router';
 import Link from "next/link"
 const HomePage = () => {
   const router = useRouter();  // ใช้ useRouter เพื่อเข้าถึง routerd
-
+  const { UserId } = router.query;
 
   const goToEditAccount = () => {
-    router.push('/EditAccount');
+    router.push(`/EditAccount?UserId=${UserId}`);
   };
 
   const goToHistoryPage = () => {

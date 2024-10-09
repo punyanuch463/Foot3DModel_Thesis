@@ -1,3 +1,4 @@
+
 "use client";
 
 import React, { useState, useEffect } from "react";
@@ -8,9 +9,10 @@ import { faArrowLeft, faChevronDown, faCheck } from "@fortawesome/free-solid-svg
 const SettingAccount = () => {
   const router = useRouter();
   const { userId } = router.query; // รับ UserId จาก query params
-  
+
   const [isGenderOpen, setIsGenderOpen] = useState(false);
-  const [profileImage, setProfileImage] = useState(null);
+  const [profileImageFile, setProfileImageFile] = useState(null); // เก็บไฟล์ภาพ
+  const [profileImageUrl, setProfileImageUrl] = useState(null); // สำหรับแสดงภาพก่อนอัปโหลด
   const [isChecked, setIsChecked] = useState(false);
   const [formData, setFormData] = useState({
     fullName: '',
@@ -22,46 +24,80 @@ const SettingAccount = () => {
   });
 
   const [message, setMessage] = useState('');
-  // ดึง UserId จาก localStorage เมื่อ component mount
-  useEffect(() => {
-    // if (!userId) {
-    //     setMessage('ไม่พบ UserId กรุณาสร้างบัญชีใหม่');
-    //   }
-    }, [userId, router]);
+  const [isLoading, setIsLoading] = useState(false); // เพิ่ม state สำหรับการโหลด
 
-    const handleNext = async () => {
-      
-      if(!formData.fullName) {
-        setMessage('เกิดข้อผิดพลาด: กรุณากรอกข้อมูลชื่อ-นามสกุล');
-        return;
-      }    
-      if(!formData.gender) {
-        setMessage('เกิดข้อผิดพลาด: กรุณากรอกข้อมูลเพศ');
-        return;
-      }
-      if(!formData.age) {
-        setMessage('เกิดข้อผิดพลาด: กรุณากรอกข้อมูลอายุ');
-        return;
-      }
-  
-      if(!formData.heightCM) {
-        setMessage('เกิดข้อผิดพลาด:กรุณากรอกข้อมูลส่วนสูง');
-        return;
-      }
-      if(!formData.shoeSizeEU) {
-        setMessage('เกิดข้อผิดพลาด: กรุณากรอกข้อมูลขนาดเท้า EU');
-        return;
-      }
-      if(!formData.shoeSizeCM) {
-        setMessage('เกิดข้อผิดพลาด: กรุณากรอกข้อมูลขนาดเท้า CM');
-        return;
-      }
-      if (!isChecked) {
-        setMessage('เกิดข้อผิดพลาด:กรุณายอมรับข้อกำหนดและนโยบายความเป็นส่วนตัว');
-        return;
-      }
+  function getImageUrl(googleDriveLink) {
+    const fileIdMatch = googleDriveLink.match(/d\/(.*?)(\/|$)/);
+    if (fileIdMatch && fileIdMatch[1]) {
+      const fileId = fileIdMatch[1];
+      return `https://images.weserv.nl/?url=drive.google.com/uc?id=${fileId}`;
+    }
+    return googleDriveLink; // คืนลิงก์เดิมถ้าไม่พบไฟล์ ID
+  }
+
+  useEffect(() => {
+    // สามารถเพิ่มฟังก์ชัน fetch ข้อมูลผู้ใช้ที่นี่ถ้าจำเป็น
+  }, [userId, router]);
+
+  const handleNext = async () => {
+    // ตรวจสอบฟอร์ม
+    if (!formData.fullName) {
+      setMessage('เกิดข้อผิดพลาด: กรุณากรอกข้อมูลชื่อ-นามสกุล');
+      return;
+    }
+    if (!formData.gender) {
+      setMessage('เกิดข้อผิดพลาด: กรุณากรอกข้อมูลเพศ');
+      return;
+    }
+    if (!formData.age) {
+      setMessage('เกิดข้อผิดพลาด: กรุณากรอกข้อมูลอายุ');
+      return;
+    }
+    if (!formData.heightCM) {
+      setMessage('เกิดข้อผิดพลาด: กรุณากรอกข้อมูลส่วนสูง');
+      return;
+    }
+    if (!formData.shoeSizeEU) {
+      setMessage('เกิดข้อผิดพลาด: กรุณากรอกข้อมูลขนาดเท้า EU');
+      return;
+    }
+    if (!formData.shoeSizeCM) {
+      setMessage('เกิดข้อผิดพลาด: กรุณากรอกข้อมูลขนาดเท้า CM');
+      return;
+    }
+    if (!isChecked) {
+      setMessage('เกิดข้อผิดพลาด: กรุณายอมรับข้อกำหนดและนโยบายความเป็นส่วนตัว');
+      return;
+    }
+    
+    setIsLoading(true); // เริ่มการโหลด
+    setMessage(''); // ล้างข้อความข้อผิดพลาดก่อนหน้า
 
     try {
+      let uploadedImageUrl = null;
+
+      // ถ้ามีไฟล์ภาพที่เลือก ให้ทำการอัปโหลด
+      if (profileImageFile) {
+        const uploadFormData = new FormData();
+        uploadFormData.append("file", profileImageFile);
+
+        const uploadRes = await fetch("/api/uploadToDrive", {
+          method: "POST",
+          body: uploadFormData,
+        });
+
+        const uploadData = await uploadRes.json();
+
+        if (uploadRes.ok && uploadData.success) {
+          uploadedImageUrl = getImageUrl(uploadData.imageUrl);
+        } else {
+          setMessage(`เกิดข้อผิดพลาดในการอัปโหลดภาพ: ${uploadData.message}`);
+          setIsLoading(false); // สิ้นสุดการโหลดเนื่องจากเกิดข้อผิดพลาด
+          return;
+        }
+      }
+
+      // ส่งข้อมูลผู้ใช้ไปยัง API
       const res = await fetch('/api/updateUser', {
         method: 'POST',
         headers: {
@@ -70,7 +106,7 @@ const SettingAccount = () => {
         body: JSON.stringify({
           UserId: userId,
           ...formData,
-          profileImage, // ส่งรูปโปรไฟล์
+          profileImage: uploadedImageUrl, // ส่ง URL ของรูปที่อัปโหลด
         }),
       });
 
@@ -78,17 +114,19 @@ const SettingAccount = () => {
 
       if (res.ok) {
         alert('อัปเดตบัญชีสำเร็จ! กำลังนำทางไปยังหน้า Consent...');
-        // setMessage('อัปเดตบัญชีสำเร็จ! กำลังนำทางไปยังหน้า Consent...');
         // นำทางไปยังหน้า PDPAConsentPage หลังจากอัปเดตสำเร็จ
         setTimeout(() => {
           router.push(`/PDPAConsentPage?UserId=${userId}`);
-        }, 2000);
+        }, 500);
       } else {
         setMessage(`เกิดข้อผิดพลาด: ${data.message}`);
       }
     } catch (error) {
       console.error('Error:', error);
       setMessage('เกิดข้อผิดพลาดในการส่งข้อมูล');
+    }
+    finally {
+      setIsLoading(false); // สิ้นสุดการโหลด
     }
   };
 
@@ -98,24 +136,14 @@ const SettingAccount = () => {
 
   const handleImageChange = (e) => {
     const file = e.target.files?.[0];
-    const reader = new FileReader();
-    reader.onloadend = () => {
-      setProfileImage(reader.result);
-    };
     if (file) {
-      reader.readAsDataURL(file);
+      setProfileImageFile(file);
+      setProfileImageUrl(URL.createObjectURL(file)); // สร้าง URL สำหรับแสดงภาพ
     }
   };
 
   const handleCheckboxClick = () => {
     setIsChecked(!isChecked);
-  };
-
-  const handleSpanClick = () => {
-    // if (!isChecked) {
-    //   setMessage('กรุณายอมรับข้อกำหนดและนโยบายความเป็นส่วนตัว');
-    //   return;
-    // }
   };
 
   const handleChange = (e) => {
@@ -156,7 +184,7 @@ const SettingAccount = () => {
           <div
             className="profile-image"
             style={{
-              backgroundImage: `url(${profileImage || "/default-profile.png"})`,
+              backgroundImage: `url(${profileImageUrl || "/default-profile.png"})`,
             }}
           ></div>
         </label>
@@ -170,57 +198,61 @@ const SettingAccount = () => {
           name="fullName"
           value={formData.fullName}
           onChange={handleChange}
+          placeholder="กรุณากรอกชื่อ-นามสกุล"
           required
         />
       </div>
 
       <div className="input-group">
-  <label htmlFor="gender">เพศ</label>
-  <div className="select-wrapper-setting">
-    <select
-      id="gender"
-      name="gender" // Added name attribute
-      value={formData.gender} // Controlled value
-      onChange={handleChange} // onChange handler
-      className={isGenderOpen ? "open" : ""}
-      required // Added required for validation
-    >
-      <option value="">เลือกเพศ</option> {/* Changed value from "choose" to "" */}
-      <option value="male">ชาย</option>
-      <option value="female">หญิง</option>
-      <option value="other">อื่นๆ</option>
-    </select>
-    <FontAwesomeIcon
-      icon={faChevronDown}
-      className="select-icon"
-      onClick={toggleGenderVisibility}
-    />
-  </div>
-</div>
-
+        <label htmlFor="gender">เพศ</label>
+        <div className="select-wrapper-setting">
+          <select
+            id="gender"
+            name="gender"
+            value={formData.gender}
+            onChange={handleChange}
+            className={isGenderOpen ? "open" : ""}
+            required
+          >
+            <option value="">เลือกเพศ</option>
+            <option value="male">ชาย</option>
+            <option value="female">หญิง</option>
+            <option value="other">อื่นๆ</option>
+          </select>
+          <FontAwesomeIcon
+            icon={faChevronDown}
+            className="select-icon"
+            onClick={toggleGenderVisibility}
+          />
+        </div>
+      </div>
 
       <div className="input-group">
         <label htmlFor="age">อายุ</label>
-        <input 
-          type="age" 
-          id="age" 
-          name="age" 
-          value={formData.age} 
-          onChange={handleChange} 
-          min="0" 
+        <input
+          type="age"
+          id="age"
+          name="age"
+          value={formData.age}
+          onChange={handleChange}
+          min="0"
+          placeholder="กรุณากรอกอายุ"
+          required
         />
       </div>
 
       <div className="input-group">
         <label htmlFor="heightCM">ส่วนสูง (เซนติเมตร)</label>
-        <input 
-          type="heightCM" 
-          id="heightCM" 
-          name="heightCM" 
-          value={formData.heightCM} 
-          onChange={handleChange} 
-          step="0.01" 
-          min="0" 
+        <input
+          type="heightCM"
+          id="heightCM"
+          name="heightCM"
+          value={formData.heightCM}
+          onChange={handleChange}
+          step="0.01"
+          min="0"
+          placeholder="กรุณากรอกส่วนสูง"
+          required
         />
       </div>
 
@@ -233,6 +265,8 @@ const SettingAccount = () => {
           value={formData.shoeSizeEU}
           onChange={handleChange}
           min="0"
+          placeholder="กรุณากรอกขนาดเท้า (EU)"
+          required
         />
       </div>
 
@@ -246,6 +280,8 @@ const SettingAccount = () => {
           onChange={handleChange}
           step="0.01"
           min="0"
+          placeholder="กรุณากรอกขนาดเท้า (เซนติเมตร)"
+          required
         />
       </div>
 
@@ -254,15 +290,22 @@ const SettingAccount = () => {
           <div className={`custom-checkbox ${isChecked ? 'checked' : ''}`}>
             {isChecked && <span className="checkmark">✓</span>}
           </div>
-          <span onClick={handleSpanClick} style={{ fontFamily: 'Sukhumvit Set, sans-serif', cursor: 'pointer' }}>
+          <span style={{ fontFamily: 'Sukhumvit Set, sans-serif', cursor: 'pointer' }}>
             ยอมรับข้อกำหนดและนโยบายความเป็นส่วนตัว
           </span>
         </label>
       </div>
 
-      <button type="button" className="primary-btn" onClick={handleNext}>
-        ต่อไป
+      <button type="button" className="primary-btn" onClick={handleNext} disabled={isLoading} // ปิดการใช้งานปุ่มเมื่อกำลังโหลด
+      >
+        {isLoading ? "กำลังดำเนินการ..." : "ต่อไป"} {/* แสดงข้อความตามสถานะการโหลด */}
       </button>
+
+     {isLoading && (
+        <div className="loading-overlay">
+          <div className="spinner"></div>
+        </div>
+      )}
     </div>
   );
 };
