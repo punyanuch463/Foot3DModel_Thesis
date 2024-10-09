@@ -95,7 +95,7 @@ const FootSizeForm = () => {
         </div>
       
       <main className={styles.main}>
-        <p className={styles.title}>ข้อมูลเท้าของคุณ</p>
+        <p className={styles.title}>ข้อมูลเท้าของคุณ แบบทดลอง</p>
 
         <div className={styles.detailed}>
           <button
