@@ -4,15 +4,14 @@ import React, { useState } from "react";
 import { useRouter } from "next/router";
 
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import {
-  faArrowLeft,
-} from "@fortawesome/free-solid-svg-icons";
+import { faArrowLeft } from "@fortawesome/free-solid-svg-icons";
 
 const PDPAConsentPage = () => {
-  const router = useRouter(); 
+  const router = useRouter();
   const [isChecked, setIsChecked] = useState(false);
   const { UserId } = router.query;
   const [message, setMessage] = useState('');
+  const [isLoading, setIsLoading] = useState(false); // สถานะการโหลด
 
   const handleCheckboxClick = () => {
     setIsChecked(!isChecked);
@@ -23,8 +22,14 @@ const PDPAConsentPage = () => {
       setMessage('กรุณายอมรับข้อกำหนดและนโยบายความเป็นส่วนตัว');
       return;
     }
-    alert('ยอมรับข้อกำหนดและนโยบายความเป็นส่วนตัวสำเร็จ! กำลังไปยังหน้า Verifycode')
-    router.push(`/CompletePage?UserId=${UserId}`);
+
+    // เริ่มแสดงหน้าการโหลด
+    setIsLoading(true);
+
+    // ใช้ setTimeout เพื่อจำลองการโหลดข้อมูล (เช่น การเรียก API) จากนั้นเปลี่ยนหน้า
+    setTimeout(() => {
+      router.push(`/CompletePage?UserId=${UserId}`);
+    }, 2000); // กำหนดเวลา 2 วินาทีเพื่อจำลองการโหลด
   };
 
   return (
@@ -71,25 +76,24 @@ const PDPAConsentPage = () => {
         หากคุณมีคำถาม
         โปรดอ่านข้อมูลเพิ่มเติมหรือติดต่อเราได้ที่แผนกบริการลูกค้าของเรา
       </p>
-
       <div className="checkbox-container">
-      <label className="checkbox-label" onClick={handleCheckboxClick}>
-        <div className={`custom-checkbox ${isChecked ? 'checked' : ''}`}>
-          {isChecked && <span className="checkmark">✓</span>}
-        </div>
-        <span>
-          ยอมรับข้อกำหนดและนโยบายความเป็นส่วนตัว</span>
-      </label>
-    </div>
+        <label className="checkbox-label" onClick={handleCheckboxClick}>
+          <div className={`custom-checkbox ${isChecked ? 'checked' : ''}`}>
+            {isChecked && <span className="checkmark">✓</span>}
+          </div>
+          <span>ยอมรับข้อกำหนดและนโยบายความเป็นส่วนตัว</span>
+        </label>
+      </div>
 
-      <button
-        type="button"
-        className="primary-btn"
-        // disabled={!isChecked} // ปุ่มจะถูกปิดใช้งานหากไม่ได้ติ๊ก checkbox
-        onClick={handleNext}
-      >
-        ต่อไป
+      <button type="button" className="primary-btn" onClick={handleNext} disabled={isLoading}>
+        {isLoading ? "กำลังดำเนินการ..." : "ต่อไป"}
       </button>
+
+      {isLoading && (
+        <div className="loading-overlay">
+          <div className="spinner"></div>
+        </div>
+      )}
     </div>
   );
 };

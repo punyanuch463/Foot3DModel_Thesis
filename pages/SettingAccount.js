@@ -113,7 +113,7 @@ const SettingAccount = () => {
       const data = await res.json();
 
       if (res.ok) {
-        alert('อัปเดตบัญชีสำเร็จ! กำลังนำทางไปยังหน้า Consent...');
+        // alert('อัปเดตบัญชีสำเร็จ! กำลังนำทางไปยังหน้า Consent...');
         // นำทางไปยังหน้า PDPAConsentPage หลังจากอัปเดตสำเร็จ
         setTimeout(() => {
           router.push(`/PDPAConsentPage?UserId=${userId}`);
@@ -126,7 +126,9 @@ const SettingAccount = () => {
       setMessage('เกิดข้อผิดพลาดในการส่งข้อมูล');
     }
     finally {
-      setIsLoading(false); // สิ้นสุดการโหลด
+      setTimeout(() => {
+        setIsLoading(false); // ยกเลิกสถานะ loading หลังจากส่งข้อมูลเสร็จ
+      }, 2000); // Show spinner for 2 second minimum
     }
   };
 

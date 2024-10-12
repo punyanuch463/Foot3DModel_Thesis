@@ -163,7 +163,7 @@ const EditAccount = () => {
       const data = await res.json();
 
       if (res.ok) {
-        alert('อัปเดตบัญชีสำเร็จ! กำลังนำทางไปยังหน้า Homepage...');
+        // alert('อัปเดตบัญชีสำเร็จ! กำลังนำทางไปยังหน้า Homepage...');
         setTimeout(() => {
           router.push(`/HomePage?UserId=${UserId}`);
         }, 500);
@@ -175,7 +175,9 @@ const EditAccount = () => {
       setMessage('เกิดข้อผิดพลาดในการส่งข้อมูล');
     }
     finally {
-      setIsLoading(false); // สิ้นสุดการโหลด
+      setTimeout(() => {
+        setIsLoading(false); // ยกเลิกสถานะ loading หลังจากส่งข้อมูลเสร็จ
+      }, 2000); // Show spinner for 2 second minimum
     }
   };
   

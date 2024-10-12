@@ -8,31 +8,31 @@ import { faArrowLeft, faCheck } from "@fortawesome/free-solid-svg-icons";
 const CompletePage = () => {
   const [verificationCode, setVerificationCode] = useState('');
   const [errorMessage, setErrorMessage] = useState('');
+  const [message, setMessage] = useState('');
+  const [isLoading, setIsLoading] = useState(false); // สถานะการโหลด
   const router = useRouter();
   const { UserId } = router.query;
 
   useEffect(() => {
     if (!UserId) {
-      setErrorMessage('UserId is missing.');
+      setErrorMessage('ไม่พบ UserId.');
     }
   }, [UserId]);
 
-  const [message, setMessage] = useState('');
-
   const handleNext = async () => {
     if (!UserId) {
-      setErrorMessage('Invalid UserId.');
+      setErrorMessage('ไม่พบ UserId.');
       return;
     }
+
+    
 
     const userIdNumber = parseInt(UserId, 10);
-    if (isNaN(userIdNumber)) {
-      setErrorMessage('Invalid UserId.');
-      return;
-    }
-
-    console.log('Sending verification request with:', { UserId: userIdNumber, code: verificationCode });
    
+
+    setIsLoading(true); // เริ่มการโหลด
+    setMessage(''); // ล้างข้อความข้อผิดพลาดก่อนหน้า
+
     try {
       const response = await fetch('/api/verifyCode', {
         method: 'POST',
@@ -43,16 +43,20 @@ const CompletePage = () => {
       const data = await response.json();
 
       if (response.ok) {
-        alert('ยืนยันสำเร็จ! กำลังนำทางไปยังหน้า Login...');
-        // setMessage('ยืนยันสำเร็จ! กำลังนำทางไปยังหน้า Login...');
-        router.push("/LoginPage");
+        // alert('ยืนยันสำเร็จ! กำลังนำทางไปยังหน้า Login...');
+        setTimeout(() => {
+          router.push("/LoginPage");
+        }, 500);
       } else {
-        // เปลี่ยนจาก data.message เป็น data.error
-        setMessage(`เกิดข้อผิดพลาด: ${data.error}`);
+        setMessage(`เกิดข้อผิดพลาด: ${data.error || data.message}`);
       }
     } catch (error) {
       console.error('Error:', error);
       setMessage('เกิดข้อผิดพลาดในการส่งข้อมูล');
+    } finally {
+      setTimeout(() => {
+        setIsLoading(false); // ยกเลิกสถานะ loading หลังจากส่งข้อมูลเสร็จ
+      }, 2000); // Show spinner for 2 second minimum
     }
   };
 
@@ -73,8 +77,9 @@ const CompletePage = () => {
         <div className="circle">3</div>
       </div>
       <h1>ยืนยัน</h1>
-      
+
       {message && <p className='alert'>{message}</p>}
+      {errorMessage && <p className='alert'>{errorMessage}</p>}
 
       <div className="center-circle-container">
         <div className="center-circle">
@@ -94,14 +99,26 @@ const CompletePage = () => {
             id="verificationCode"
             value={verificationCode}
             onChange={(e) => setVerificationCode(e.target.value)}
-            placeholder="Enter verification code"
+            placeholder="กรอกรหัสยืนยัน"
+            required
           />
         </div>
       </div>
 
-       <button type="button" className="primary-btn" onClick={handleNext}>
-        ต่อไป
+      <button
+        type="button"
+        className="primary-btn"
+        onClick={handleNext}
+        disabled={isLoading} // ปิดการใช้งานปุ่มเมื่อกำลังโหลด
+      >
+        {isLoading ? "กำลังดำเนินการ..." : "ต่อไป"} {/* แสดงข้อความตามสถานะการโหลด */}
       </button>
+
+      {isLoading && (
+        <div className="loading-overlay">
+          <div className="spinner"></div>
+        </div>
+      )}
     </div>
   );
 };

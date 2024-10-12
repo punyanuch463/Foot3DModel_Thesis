@@ -43,6 +43,7 @@ export default function About() {
 
           </button>
           </Link>
+          
           <Link href="/takePhotoFoot/takePhotoFootLeft2" >
           <button className={styles.confirm} >ยืนยัน
 

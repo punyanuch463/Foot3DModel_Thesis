@@ -10,7 +10,9 @@ import {
 } from "@fortawesome/free-solid-svg-icons";
 
 const CreateAccount = () => {
+  const [isLoading, setIsLoading] = useState(false); // สถานะการโหลด
   const [passwordVisible, setPasswordVisible] = useState(false);
+    const [userEmail, setUserEmail] = useState('');
   const [formData, setFormData] = useState({
     UserName: '',
     UserPassWord: '',
@@ -19,50 +21,6 @@ const CreateAccount = () => {
   });
   const [message, setMessage] = useState('');
   const router = useRouter(); // ใช้ useRouter สำหรับการนำทาง
-
-  const [userEmail, setUserEmail] = useState('');
-  const handleSendEmail = async () => {
-    // if (!userEmail) {
-    //     setMessage('กรุณากรอกอีเมลก่อนส่ง'); // "Please enter an email before sending"
-    //     return;
-    // }
-
-    const response = await fetch('/api/sendVerificationEmail', {
-        method: 'POST', 
-        headers: {
-            'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({ email: userEmail }), 
-    });
-
-    const data = await response.json();
-    if (response.ok) {
-        console.log(data.message);
-        setMessage('ส่งอีเมลยืนยันสำเร็จ!'); // "Verification email sent successfully!"
-    } else {
-        // Validate form completeness
-    if(!formData.UserName) {
-      setMessage('เกิดข้อผิดพลาด: กรุณากรอกข้อมูลชื่อ');
-      return;
-    }    
-    if(!formData.UserEmail) {
-      setMessage('เกิดข้อผิดพลาด: กรุณากรอกข้อมูลอีเมล');
-      return;
-    }
-    if(!formData.UserPassWord) {
-      setMessage('เกิดข้อผิดพลาด: กรุณากรอกข้อมูลรหัสผ่าน');
-      return;
-    }
-
-    if(!formData.PhoneNumber) {
-      setMessage('เกิดข้อผิดพลาด: กรุณากรอกข้อมูลเบอร์โทรศัพท์');
-      return;
-    }
-        // console.error(data.error);
-        // setMessage(`เกิดข้อผิดพลาด: ${data.error}`); // "Error occurred: ..."
-    }
-};
-
 
   const togglePasswordVisibility = () => {
     setPasswordVisible(!passwordVisible);
@@ -75,16 +33,31 @@ const CreateAccount = () => {
       [name]: value
     });
   };
-  const handleSubmit = async (e) => {
+
+  const handleCreateAccount = async (e) => {
     e.preventDefault();
 
-  
-    if (!formData.UserName || !formData.UserPassWord || !formData.UserEmail) {
-      setMessage('กรุณากรอกข้อมูลที่จำเป็นทั้งหมด');
-      return;
-    }
+    setIsLoading(true); // เริ่มการโหลด
+    setMessage(''); // ล้างข้อความข้อผิดพลาดก่อนหน้า
 
     try {
+      
+      // ส่งอีเมลยืนยัน
+      const emailResponse = await fetch('/api/sendVerificationEmail', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ email: userEmail }),
+      });
+
+      const emailData = await emailResponse.json();
+      if (emailResponse.ok) {
+        console.log(emailData.message);
+                setMessage('ส่งอีเมลยืนยันสำเร็จ!'); // "Verification email sent successfully!"
+      }
+
+      // สร้างบัญชีผู้ใช้
       const res = await fetch('/api/addUser', {
         method: 'POST',
         headers: {
@@ -96,21 +69,43 @@ const CreateAccount = () => {
       const data = await res.json();
 
       if (res.ok) {
-        alert('สร้างบัญชีสำเร็จ! กำลังนำทางไปยังการตั้งค่าบัญชี...');
-        // setMessage('สร้างบัญชีสำเร็จ! กำลังนำทางไปยังการตั้งค่าบัญชี...');
-        // Navigate to SettingAccount with UserId
+        // alert('สร้างบัญชีสำเร็จ! กำลังนำทางไปยังการตั้งค่าบัญชี...');
         setTimeout(() => {
           router.push(`/SettingAccount?userId=${data.UserId}`);
-        }, 2000);
+        }, 500);
       } else {
         
-        setMessage(`เกิดข้อผิดพลาด: ${data.message}`);
+        setMessage(`เกิดข้อผิดพลาดในการสร้างบัญชี: ${data.message}`);
       }
     } catch (error) {
       console.error('Error:', error);
       setMessage('เกิดข้อผิดพลาดในการส่งข้อมูล');
+    } finally {
+      setTimeout(() => {
+        setIsLoading(false); // ยกเลิกสถานะ loading หลังจากส่งข้อมูลเสร็จ
+      }, 2000); // Show spinner for 2 second minimum
     }
   };
+
+   const handleMsg = async () => {
+        if(!formData.UserName) {
+          setMessage('เกิดข้อผิดพลาด: กรุณากรอกข้อมูลชื่อ');
+          return;
+        }    
+        if(!formData.UserEmail) {
+          setMessage('เกิดข้อผิดพลาด: กรุณากรอกข้อมูลอีเมล');
+          return;
+        }
+        if(!formData.UserPassWord) {
+          setMessage('เกิดข้อผิดพลาด: กรุณากรอกข้อมูลรหัสผ่าน');
+          return;
+        }
+    
+        if(!formData.PhoneNumber) {
+          setMessage('เกิดข้อผิดพลาด: กรุณากรอกข้อมูลเบอร์โทรศัพท์');
+          return;
+        }
+      };
 
   return (
     <div className="container">
@@ -130,7 +125,7 @@ const CreateAccount = () => {
         <a href="/LoginPage">เข้าสู่ระบบ</a>
       </div>
       {message && <p className="alert">{message}</p>}
-      <form onSubmit={handleSubmit}>
+      <form onSubmit={handleCreateAccount}>
         <div className="input-group">
           <label htmlFor="UserName">ชื่อผู้ใช้</label>
           <input 
@@ -139,26 +134,22 @@ const CreateAccount = () => {
             name="UserName" 
             value={formData.UserName} 
             onChange={handleChange} 
-              placeholder="กรุณากรอกชื่อผู้ใช้งาน"
+            placeholder="กรุณากรอกชื่อผู้ใช้งาน"
             required 
           />
         </div>
 
-<div className="input-group">
-<label htmlFor="UserEmail">อีเมล</label>
-            <input
-                type="email"
-                id="UserEmail" 
-                name="UserEmail" 
+        <div className="input-group">
+          <label htmlFor="UserEmail">อีเมล</label>
+          <input
+            type="email"
+            id="UserEmail" 
+            name="UserEmail" 
             value={formData.UserEmail} 
-            onChange={(e) => {
-              handleChange(e);
-              setUserEmail(e.target.value); // Set userEmail state on input change
-          }} 
-                placeholder="กรุณากรอกอีเมล"
-                required 
-            />
-      
+            onChange={handleChange} 
+            placeholder="กรุณากรอกอีเมล"
+            required 
+          />
         </div>
 
         <div className="input-group">
@@ -171,7 +162,7 @@ const CreateAccount = () => {
               value={formData.UserPassWord} 
               onChange={handleChange} 
               required 
-                placeholder="กรุณากรอกรหัสผ่าน"
+              placeholder="กรุณากรอกรหัสผ่าน"
             />
             <FontAwesomeIcon
               icon={passwordVisible ? faEyeSlash : faEye}
@@ -189,18 +180,30 @@ const CreateAccount = () => {
             name="PhoneNumber" 
             value={formData.PhoneNumber} 
             onChange={handleChange} 
-              placeholder="กรุณากรอกเบอร์โทร"
+            placeholder="กรุณากรอกเบอร์โทร"
             required 
           />
         </div>
-        <button type="submit" className="primary-btn"  onClick={handleSendEmail}>
-          ต่อไป
+        
+        {/* ปุ่มสำหรับสร้างบัญชีและส่งอีเมลยืนยัน */}
+        <button 
+        onClick={handleMsg} 
+          type="submit" 
+          className="primary-btn" 
+          disabled={isLoading} // ปิดการใช้งานปุ่มเมื่อกำลังโหลด
+        >
+          {isLoading ? "กำลังดำเนินการ..." : "สร้างบัญชี"} {/* แสดงข้อความตามสถานะการโหลด */}
         </button>
+
+        {/* แสดง loading overlay เมื่อกำลังโหลด */}
+        {isLoading && (
+          <div className="loading-overlay">
+            <div className="spinner"></div>
+          </div>
+        )}
       </form>
     </div>
   );
 };
 
 export default CreateAccount;
-
-      

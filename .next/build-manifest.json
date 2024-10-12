@@ -15,10 +15,10 @@
   ],
   "rootMainFiles": [],
   "pages": {
-    "/EditAccount": [
+    "/LoginPage": [
       "static/chunks/webpack.js",
       "static/chunks/main.js",
-      "static/chunks/pages/EditAccount.js"
+      "static/chunks/pages/LoginPage.js"
     ],
     "/_app": [
       "static/chunks/webpack.js",
