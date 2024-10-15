@@ -381,9 +381,6 @@ select.open {
   font-size: 12px;
 }
 
-.menuItem:hover {
-  color: #007bff;
-}
 .menuItem svg {
   font-size: 24px;
 }
@@ -406,10 +403,38 @@ select.open {
   transform: translateY(-50%);
   pointer-events: none; /* ไม่ให้ไอคอนขวางการคลิกที่ dropdown */
 }
+/*Menu Styles */
+.content-menu {
+  display: grid; /* ใช้ grid layout แทน flex */
+  grid-template-columns: repeat(2, 1fr); /* กำหนด 2 คอลัมน์ */
+  gap: 20px; /* ระยะห่างระหว่างไอเท็ม */
+  margin-top: 20px; /* เพิ่มระยะห่างจากส่วนอื่น */
+  padding: 24px
+}
 
+.content-item {
+  display: flex;
+  flex-direction: column; /* จัดเรียงแนวตั้ง */
+  align-items: center; /* จัดให้อยู่กลาง */
+  justify-content: center; /* จัดกลางแนวตั้ง */
+  padding: 15px; /* Padding รอบๆ item */
+  padding-top: 50px;
+  padding-bottom: 50px;
+  border-radius: 8px; /* มุมโค้ง */
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1); /* เงา */
+  background-color: #102c57; /* สีพื้นหลัง */
+  color: #FEFAF6;
+  transition: box-shadow 0.3s; /* เอฟเฟคตอน hover */
+  font-size: 24px;
+}
+
+.content-icon {
+  font-size: 40px; /* ขนาดของไอคอน */
+  margin-bottom: 8px; /* ระยะห่างจากข้อความ */
+  color: #FEFAF6; /* สีไอคอน */
+}
 
 /* HistoryPage */
-
 /* จัดการโครงสร้างหลักของหน้า */
 .historyPage {
   max-width: 600px;
@@ -519,7 +544,7 @@ select.open {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  margin-bottom: 15px; /* เพิ่มระยะห่างด้านล่าง */
+
 }
 
 .orderCode {
@@ -753,4 +778,52 @@ color: #555;
 
 .info-card li {
   margin: 5px 0;
+}
+
+/* User History */
+.notification-popup {
+  position: absolute;
+  top: 80px; /* ปรับตามตำแหน่งที่ต้องการ */
+  right: 18px;
+  width: 250px;
+  padding: 16px;
+  background-color: white;
+  border: 1px solid #ccc;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  border-radius: 8px;
+  z-index: 100;
+}
+
+.notification-title {
+  margin-top: 16px;
+  font-weight: bold;
+  color: #102c57;
+}
+
+.notification-content {
+  display: flex;
+  align-items: center;
+  margin-bottom: 8px;
+  font-size: 16px;
+}
+
+.clock-icon {
+  margin-right: 16px;
+}
+
+.close-icon {
+  position: absolute;
+  top: 10px;
+  right: 7px;
+  margin-top: 8px;
+  margin-right: 8px;
+  cursor: pointer;
+  color: #102c57;
+}
+
+.notification-time {
+  text-align: right;
+  color: #888;
+  font-size: 12px;
+  margin-bottom: 8px;
 }

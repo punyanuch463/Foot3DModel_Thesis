@@ -1,8 +1,8 @@
 "use client";
 import React, { useState } from "react";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faArrowLeft, faChevronDown } from "@fortawesome/free-solid-svg-icons";
-import { faBell } from "@fortawesome/free-regular-svg-icons";
+import { faArrowLeft, faChevronDown, faTimes } from "@fortawesome/free-solid-svg-icons";
+import { faBell, faClock  } from "@fortawesome/free-regular-svg-icons";
 import { FaSearch, FaCalendarAlt, FaDotCircle } from "react-icons/fa";
 import DatePicker from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
@@ -19,6 +19,7 @@ const UserHistory = () => {
   const [expandedOrder, setExpandedOrder] = useState(null); // Track expanded card
   const [expandedDetail, setExpandedDetail] = useState(null); // Track expanded detail
   const router = useRouter();
+  const [showNotification, setShowNotification] = useState(false); // สถานะเปิด/ปิดแจ้งเตือน
 
   const handleSearch = () => {
     console.log({
@@ -43,6 +44,14 @@ const UserHistory = () => {
 
   const toggleExpandDetail = (index) => {
     setExpandedDetail(expandedDetail === index ? null : index);
+  };
+
+  const toggleNotification = () => {
+    setShowNotification(!showNotification);
+  };
+
+  const closeNotification = () => {
+    setShowNotification(false);
   };
 
   const orderSteps = [
@@ -89,7 +98,33 @@ const UserHistory = () => {
             <FontAwesomeIcon
               icon={faBell} // Notification icon
               className="notification-icon"
+              onClick={toggleNotification}
             />
+            {showNotification && (
+              <div className="notification-popup">
+                <FontAwesomeIcon
+                  icon={faTimes}
+                  className="close-icon"
+                  onClick={closeNotification}
+                />
+                <p className="notification-title"><strong>แจ้งเตือน</strong></p>
+                <div className="notification-content">
+                  <FontAwesomeIcon icon={faClock} className="clock-icon" />
+                  <span>รหัสการสั่ง 0003, ส่งภาพถ่าย<br />ให้ผู้ดูแลระบบแล้ว</span>
+                </div>
+                <p className="notification-time">ตอนนี้</p>
+                <div className="notification-content">
+                  <FontAwesomeIcon icon={faClock} className="clock-icon" />
+                  <span>รหัสการสั่ง 0003, ส่งภาพถ่าย<br />ให้ผู้ดูแลระบบแล้ว</span>
+                </div>
+                <p className="notification-time">ตอนนี้</p>
+                <div className="notification-content">
+                  <FontAwesomeIcon icon={faClock} className="clock-icon" />
+                  <span>รหัสการสั่ง 0003, ส่งภาพถ่าย<br />ให้ผู้ดูแลระบบแล้ว</span>
+                </div>
+                <p className="notification-time">ตอนนี้</p>
+              </div>
+            )}
             <img
               src="/path/to/profile-picture.jpg" // Change to your profile picture path
               alt="Profile"
