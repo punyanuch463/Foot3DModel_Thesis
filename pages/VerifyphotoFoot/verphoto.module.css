@@ -37,24 +37,35 @@ font-size: 24px;
 .imageContainer {
   position: relative;
   display: inline-block;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 20px;
+  border-radius: 10px;
 }
 
 .frameContainer {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 20px;
+  border-radius: 10px;
   position: relative;
   object-fit: contain;
 }
 
 .frameImage {
   
-  width: 350px;
+  width: 250px;
   height: 350px;
   position: absolute;
   background-color: transparent;
   margin: 20px;
 }
 .capturedImage {
+  object-fit: cover;
   margin: 20px;
-  width: 350px;
+  width: 250px;
   height: 350px;
 }
 .backButton {

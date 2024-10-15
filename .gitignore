@@ -32,3 +32,7 @@ yarn-error.log*
 
 # vercel
 .vercel
+
+#ignoreS
+.env
+/credentials.json

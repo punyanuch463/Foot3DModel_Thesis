@@ -1,4 +1,4 @@
-// pages/api/sendVerificationEmail.js
+
 
 import db from './db';
 import nodemailer from 'nodemailer';
@@ -34,7 +34,7 @@ export default async function handler(req, res) {
         return res.status(200).json({ message: 'Verification successful!' });
       } catch (error) {
         console.error('Error verifying code:', error);
-        return res.status(500).json({ error: 'Internal server error during verification.' });
+        return res.status(500).json({ error: 'Internal server error.' });
       }
     } else if (UserId) {
       // Handle sending the verification email
@@ -42,7 +42,7 @@ export default async function handler(req, res) {
         // Fetch the user's email from the User table
         const [users] = await db.execute('SELECT UserEmail FROM User WHERE UserId = ?', [UserId]);
         if (users.length === 0) {
-          return res.status(404).json({ message: 'User not found.' });
+          return res.status(404).json({ message: 'ไม่พบผู้ใช้งาน.' });
         }
         const userEmail = users[0].UserEmail;
 
@@ -80,13 +80,13 @@ export default async function handler(req, res) {
         return res.status(200).json({ message: 'Verification email sent successfully!' });
       } catch (error) {
         console.error('Error sending verification email:', error.message);
-        return res.status(500).json({ error: 'Error sending verification email.' });
+        return res.status(500).json({ error: 'ส่งอีเมลไม่ได้.' });
       }
     } else {
-      return res.status(400).json({ error: 'UserId or code is required.' });
+      return res.status(400).json({ error: 'ต้องการ userid หรือ verify code' });
     }
   } else {
     res.setHeader('Allow', ['POST']);
-    return res.status(405).end(`Method ${req.method} Not Allowed`);
+    return res.status(405).end(`405 ${req.method} Not Allowed`);
   }
 }

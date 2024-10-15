@@ -41,7 +41,7 @@ export default function About() {
 
           </button>
           </Link>
-          <Link href="/FootData/footDataInformationSilde" >
+          <Link href="/footDataInformationSilde" >
           <button className={styles.confirm} >ยืนยัน
 
           </button>
