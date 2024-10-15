@@ -7,7 +7,7 @@ export default async function handler(req, res) {
 
     // ตรวจสอบข้อมูลที่จำเป็น
     if (!UserId) {
-      return res.status(400).json({ message: 'Missing UserId' });
+      return res.status(400).json({ message: 'ไม่พบ Userid' });
     }
 
     try {
@@ -37,12 +37,12 @@ export default async function handler(req, res) {
 
       await db.execute(query, values);
 
-      res.status(200).json({ message: 'User updated successfully' });
+      res.status(200).json({ message: 'ผู้ใช้งานถูกเเก้ไขเเล้ว' });
     } catch (error) {
       console.error('Error updating user:', error);
-      res.status(500).json({ message: 'Error updating user' });
+      res.status(500).json({ message: 'ไม่สามารถเเก้ไข' });
     }
   } else {
-    res.status(405).json({ message: 'Method Not Allowed' });
+    res.status(405).json({ message: '405 Not Allowed' });
   }
 }

@@ -91,7 +91,7 @@ const UserHistory = () => {
               className="notification-icon"
             />
             <img
-              src="/path/to/profile-picture.jpg" // Change to your profile picture path
+              src="/default-profile.png" // Change to your profile picture path
               alt="Profile"
               className="profile-pic"
             />

@@ -23,12 +23,12 @@ export default async function handler(req, res) {
 
     // ตรวจสอบความยาวรหัสผ่าน
     if (UserPassWord.length < 6) {
-      return res.status(400).json({ message: 'Password must be at least 6 characters long' });
+      return res.status(400).json({ message: 'รหัสผ่านจะต้องมีความยาวอย่างน้อย 6 ตัวอักษรขึันไป' });
     }
 
     // Hash รหัสผ่านก่อนเก็บ (แนะนำให้ใช้ bcrypt หรือ library อื่นๆ)
     // ตัวอย่างใช้ bcrypt
-    // const bcrypt = require('bcrypt');
+    // cons         t bcrypt = require('bcrypt');
     // const saltRounds = 10;
     // const hashedPassword = await bcrypt.hash(UserPassWord, saltRounds);
 
@@ -42,7 +42,7 @@ export default async function handler(req, res) {
       const [existingUsers] = await connection.execute('SELECT * FROM User WHERE UserEmail = ?', [UserEmail]);
       if (existingUsers.length > 0) {
         await connection.rollback();
-        return res.status(400).json({ message: 'Email already exists' });
+        return res.status(400).json({ message: 'คุณมีอีเมลอยู่ในระบบ กรุณาใช้อีเมลใหม่ หรือ เข้าสู่ระบบ' });
       }
 
       // เพิ่มผู้ใช้ใหม่ในตาราง User

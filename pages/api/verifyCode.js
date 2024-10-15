@@ -38,10 +38,10 @@ export default async function handler(req, res) {
       return res.status(200).json({ message: 'Verification successful!' });
     } catch (error) {
       console.error('Error verifying code:', error);
-      return res.status(500).json({ error: 'Internal server error during verification.' });
+      return res.status(500).json({ error: 'Internal server error .' });
     }
   } else {
     res.setHeader('Allow', ['POST']);
-    return res.status(405).end(`Method ${req.method} Not Allowed`);
+    return res.status(405).end(`405 ${req.method} Not Allowed`);
   }
 }

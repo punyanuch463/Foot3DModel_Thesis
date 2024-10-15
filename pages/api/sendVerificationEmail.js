@@ -1,58 +1,4 @@
-// import nodemailer from 'nodemailer';
 
-// let verificationCodes = {}; // เก็บรหัสยืนยันชั่วคราว
-
-// const generateCode = () => {
-//     return Math.random().toString(36).substring(2, 8).toUpperCase(); // สุ่มรหัส 6 หลัก
-// };
-
-// export default async function handler(req, res) {
-//     if (req.method === 'POST') {
-//         const { email, code } = req.body;
-
-//         if (code) {
-//             // ตรวจสอบรหัสยืนยัน
-//             if (verificationCodes[email] === code) {
-//                 return res.status(200).json({ message: 'Verification successful!' });
-//             } else {
-//                 return res.status(400).json({ error: 'Incorrect verification code.' });
-//             }
-//         } else if (email) {
-//             // ส่งรหัสยืนยันทางอีเมล
-//             const verificationCode = generateCode();
-//             verificationCodes[email] = verificationCode; // เก็บรหัสไว้ชั่วคราว
-
-//             try {
-//                 const transporter = nodemailer.createTransport({
-//                     service: 'Gmail',
-//                     auth: {
-//                         user: process.env.EMAIL_USER,
-//                         pass: process.env.EMAIL_PASS,
-//                     },
-//                 });
-
-//                 const mailOptions = {
-//                     from: process.env.EMAIL_USER,
-//                     to: email,
-//                     subject: 'Verification Code',
-//                     text: `Your verification code is: ${verificationCode}`,
-//                 };
-
-//                 await transporter.sendMail(mailOptions);
-//                 return res.status(200).json({ message: 'Verification email sent successfully!' });
-//             } catch (error) {
-//                 console.error('Error sending verification email:', error.message);
-//                 return res.status(500).json({ error: error.message });
-//             }
-//         } else {
-//             return res.status(400).json({ error: 'Email or code is required.' });
-//         }
-//     } else {
-//         res.setHeader('Allow', ['POST']);
-//         return res.status(405).end(`Method ${req.method} Not Allowed`);
-//     }
-// }
-// pages/api/sendVerificationEmail.js
 
 import db from './db';
 import nodemailer from 'nodemailer';
@@ -88,7 +34,7 @@ export default async function handler(req, res) {
         return res.status(200).json({ message: 'Verification successful!' });
       } catch (error) {
         console.error('Error verifying code:', error);
-        return res.status(500).json({ error: 'Internal server error during verification.' });
+        return res.status(500).json({ error: 'Internal server error.' });
       }
     } else if (UserId) {
       // Handle sending the verification email
@@ -96,7 +42,7 @@ export default async function handler(req, res) {
         // Fetch the user's email from the User table
         const [users] = await db.execute('SELECT UserEmail FROM User WHERE UserId = ?', [UserId]);
         if (users.length === 0) {
-          return res.status(404).json({ message: 'User not found.' });
+          return res.status(404).json({ message: 'ไม่พบผู้ใช้งาน.' });
         }
         const userEmail = users[0].UserEmail;
 
@@ -134,13 +80,13 @@ export default async function handler(req, res) {
         return res.status(200).json({ message: 'Verification email sent successfully!' });
       } catch (error) {
         console.error('Error sending verification email:', error.message);
-        return res.status(500).json({ error: 'Error sending verification email.' });
+        return res.status(500).json({ error: 'ส่งอีเมลไม่ได้.' });
       }
     } else {
-      return res.status(400).json({ error: 'UserId or code is required.' });
+      return res.status(400).json({ error: 'ต้องการ userid หรือ verify code' });
     }
   } else {
     res.setHeader('Allow', ['POST']);
-    return res.status(405).end(`Method ${req.method} Not Allowed`);
+    return res.status(405).end(`405 ${req.method} Not Allowed`);
   }
 }

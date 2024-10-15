@@ -15,10 +15,10 @@
   ],
   "rootMainFiles": [],
   "pages": {
-    "/LoginPage": [
+    "/VerifyphotoFoot/verPhotoFootLeft4": [
       "static/chunks/webpack.js",
       "static/chunks/main.js",
-      "static/chunks/pages/LoginPage.js"
+      "static/chunks/pages/VerifyphotoFoot/verPhotoFootLeft4.js"
     ],
     "/_app": [
       "static/chunks/webpack.js",
@@ -29,6 +29,11 @@
       "static/chunks/webpack.js",
       "static/chunks/main.js",
       "static/chunks/pages/_error.js"
+    ],
+    "/footDataInformationSilde": [
+      "static/chunks/webpack.js",
+      "static/chunks/main.js",
+      "static/chunks/pages/footDataInformationSilde.js"
     ]
   },
   "ampFirstPages": []

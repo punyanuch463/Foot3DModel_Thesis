@@ -13,7 +13,7 @@ export default async function handler(req, res) {
     try {
       const userData = await db.query('SELECT * FROM User WHERE UserId = ?', [UserId]);
       if (userData.length === 0) {
-        return res.status(404).json({ message: "User not found." });
+        return res.status(404).json({ message: "ไม่พบผู้ใช้งาน" });
       }
       console.log("testGet" + userData[0]);
       return res.status(200).json(userData[0]);
@@ -25,14 +25,14 @@ export default async function handler(req, res) {
     const { UserId } = req.body;
 
     if (!UserId) {
-      return res.status(400).json({ message: "UserId is required." });
+      return res.status(400).json({ message: "ต้องการ userid" });
     }
 
     // Fetch user data logic for POST
     try {
       const userData = await db.query('SELECT * FROM User WHERE UserId = ?', [UserId]);
       if (userData.length === 0) {
-        return res.status(404).json({ message: "User not found." });
+        return res.status(404).json({ message: "ไม่พบผู้ใช้งาน" });
       }
       console.log("testPost" , userData[0]);
       return res.status(200).json(userData[0]);
