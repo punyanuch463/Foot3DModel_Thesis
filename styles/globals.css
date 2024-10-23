@@ -1,4 +1,7 @@
 /* globals.css */
+p.alert{
+  color: red;
+  }
 
 @import url("https://fonts.googleapis.com/css2?family=Sukhumvit+Set&display=swap");
 .loading-overlay {
@@ -68,7 +71,7 @@ body {
 
 .top-right-icon {
   display: flex; /* จัดเรียงไอคอนและรูปโปรไฟล์ข้างกัน */
-  align-items: end; /* จัดให้อยู่ตรงกลางในแนวตั้ง */
+  align-items: flex-end; /* จัดให้อยู่ตรงกลางในแนวตั้ง */
   gap: 10px; /* เพิ่มระยะห่างระหว่างไอคอนและรูป */
 }
 
@@ -78,7 +81,7 @@ body {
   border-radius: 50%; /* ทำให้เป็นวงกลม */
   object-fit: cover; /* ครอบภาพให้อยู่ในกรอบวงกลม */
   border: 2px solid #102c57;
-  align-items: end; /* จัดให้อยู่ตรงกลางในแนวตั้ง */
+  align-items: flex-end;; /* จัดให้อยู่ตรงกลางในแนวตั้ง */
 }
 
 h1 {
@@ -765,7 +768,7 @@ color: #555;
 .grid-item {
   display: flex;
   flex-direction: column;
-  align-items: start; /* จัดข้อความและช่องให้อยู่ตรงกลาง */
+  align-items: flex-start; /* จัดข้อความและช่องให้อยู่ตรงกลาง */
 }
 
 .grid-item p {

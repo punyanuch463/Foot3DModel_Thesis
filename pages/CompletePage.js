@@ -10,22 +10,42 @@ const CompletePage = () => {
   const [errorMessage, setErrorMessage] = useState('');
   const [message, setMessage] = useState('');
   const [isLoading, setIsLoading] = useState(false); // สถานะการโหลด
+  const [UserId, setUserId] = useState(null); // State to hold UserId
   const router = useRouter();
-  const { UserId } = router.query;
+
 
   useEffect(() => {
-    if (!UserId) {
-      setErrorMessage('ไม่พบ UserId.');
+    const fetchSession = async () => {
+      try {
+        const response = await fetch('/api/getSession');
+        const data = await response.json();
+
+        if (response.ok) {
+          setUserId(data.userId); // Set UserId from session
+        } else {
+          setErrorMessage('ไม่พบข้อมูลผู้ใช้งาน กรุณาล็อกอินใหม่');
+        }
+      } catch (error) {
+        console.error('Error fetching session:', error);
+        setErrorMessage('ไม่สามารถดึงข้อมูลเซสชันได้');
+      }
+    };
+
+    fetchSession();
+  }, []); // Run once on mount
+  useEffect(() => {
+    // Check if UserId is available in router query
+    if (router.query.UserId) {
+      setUserId(router.query.UserId);
     }
-  }, [UserId]);
+  }, [router.query.UserId]);
+
 
   const handleNext = async () => {
     if (!UserId) {
       setErrorMessage('ไม่พบ UserId.');
       return;
     }
-
-    
 
     const userIdNumber = parseInt(UserId, 10);
    
@@ -43,20 +63,38 @@ const CompletePage = () => {
       const data = await response.json();
 
       if (response.ok) {
-        // alert('ยืนยันสำเร็จ! กำลังนำทางไปยังหน้า Login...');
-        setTimeout(() => {
-          router.push("/LoginPage");
-        }, 500);
+        // Fetch session after updating user data
+        const sessionRes = await fetch('/api/getSession');
+        const sessionData = await sessionRes.json();
+        
+        if (sessionRes.ok) {
+          console.log('Session Data:', sessionData);
+          
+          // If you need to do something with session data, do it here
+          await fetch('/api/session', {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({ userId: sessionData.userId }),
+          });
+  
+          setTimeout(() => {
+            router.push(`/LoginPage`);
+          }, 500);
+        } else {
+          setMessage('ไม่พบข้อมูลเซสชัน กรุณาล็อกอินใหม่');
+        }
       } else {
-        setMessage(`เกิดข้อผิดพลาด: ${data.error || data.message}`);
+        setMessage(`เกิดข้อผิดพลาด:  ${data.error || data.message}`);
       }
     } catch (error) {
       console.error('Error:', error);
       setMessage('เกิดข้อผิดพลาดในการส่งข้อมูล');
     } finally {
       setTimeout(() => {
-        setIsLoading(false); // ยกเลิกสถานะ loading หลังจากส่งข้อมูลเสร็จ
-      }, 2000); // Show spinner for 2 second minimum
+        setIsLoading(false); // ยกเลิกสถานะการโหลดหลัง 2 วินาที
+      }, 2000);
     }
   };
 

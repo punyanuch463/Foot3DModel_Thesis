@@ -74,10 +74,11 @@ import { useRouter } from "next/router";
 
 const HomePage = () => {
   const router = useRouter();
+  const { UserId } = router.query;
   const [showNotification, setShowNotification] = useState(false);
 
-  const goToEditAccount = () => {
-    router.push("/EditAccount");
+    const goToEditAccount = () => {
+    router.push(`/EditAccount?UserId=${UserId}`);
   };
 
   const goToUserHistory= () => {
@@ -129,7 +130,7 @@ const HomePage = () => {
               </div>
             )}
             <img
-              src="/path/to/profile-picture.jpg"
+              src="/default-profile.png"
               alt="Profile"
               className="profile-pic"
             />

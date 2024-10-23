@@ -7,8 +7,9 @@ import { faArrowLeft, faEye, faEyeSlash } from "@fortawesome/free-solid-svg-icon
 
 const Login = () => {
   const [passwordVisible, setPasswordVisible] = useState(false);
+  const [userId, setUserId] = useState(null); // State to hold userId from session
+  const [userEmail, setUserEmail] = useState(null); // State to hold userEmail
   const router = useRouter();
-  const { userId } = router.query; // รับ UserId จาก query params
   const [formData, setFormData] = useState({
     usernameOrEmail: '',
     UserPassWord: '',
@@ -17,12 +18,13 @@ const Login = () => {
   const [message, setMessage] = useState('');
   const [isLoading, setIsLoading] = useState(false); // สถานะ loading
 
-  useEffect(() => {}, [userId, router]);
 
+  // Function to toggle password visibility
   const togglePasswordVisibility = () => {
     setPasswordVisible(!passwordVisible);
   };
-  
+
+  // Handle input changes
   const handleChange = (e) => {
     const { name, value } = e.target;
     setFormData({
@@ -31,51 +33,62 @@ const Login = () => {
     });
   };
 
+
   const handleNext = async () => {
     if (!formData.usernameOrEmail) {
-      setMessage('เกิดข้อผิดพลาด: กรุณากรอก Email ');
-      return;
-    }
-
-    if (!formData.UserPassWord) {
-      setMessage('เกิดข้อผิดพลาด: กรุณากรอกรหัสผ่าน');
-      return;
-    }
-
-    setIsLoading(true); // เริ่มสถานะ loading
-
+          setMessage('เกิดข้อผิดพลาด: กรุณากรอก Email');
+          return;
+        }
+    
+        if (!formData.UserPassWord) {
+          setMessage('เกิดข้อผิดพลาด: กรุณากรอกรหัสผ่าน');
+          return;
+        }
+  
+    setIsLoading(true);
+  
     try {
-      const res = await fetch('/api/login', {
+      // ส่งข้อมูลล็อกอินไปที่ API
+      const loginRes = await fetch('/api/login', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
         },
-        body: JSON.stringify({
-          ...formData, // ส่งข้อมูลล็อกอิน
-        }),
+        body: JSON.stringify(formData),
       });
-
-      const data = await res.json();
-
-      if (res.ok) {
-        const userId = data.UserId; // ตรวจสอบให้แน่ใจว่า API ส่งกลับ UserId
-
-        setTimeout(() => {
-          router.push(`/HomePage?UserId=${userId}`);
-        }, 500);
+  
+      const loginData = await loginRes.json();
+  
+      if (loginRes.ok) {
+        // สร้าง session cookie
+        console.log(loginData.UserId)
+        const sessionRes = await fetch('/api/session', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({ userId: loginData.UserId }), // ส่ง userId ไปสร้าง session
+        });
+  
+        const sessionData = await sessionRes.json();
+  
+        if (sessionRes.ok) {
+          // นำทางไปหน้า HomePage หรือหน้าอื่นๆ หลังล็อกอินสำเร็จ
+          router.push('/HomePage');
+        } else {
+          setMessage(`เกิดข้อผิดพลาด: ${sessionData.message}`);
+        }
       } else {
-        setMessage(`เกิดข้อผิดพลาด: ${data.message}`);
+        setMessage(`เกิดข้อผิดพลาด: ${loginData.message}`);
       }
     } catch (error) {
       console.error('Error:', error);
-      setMessage('เกิดข้อผิดพลาดในการเข้าสู่ระบบ');
+      setMessage('เกิดข้อผิดพลาดในการส่งข้อมูล');
     } finally {
-      setTimeout(() => {
-        setIsLoading(false); // ยกเลิกสถานะ loading หลังจากส่งข้อมูลเสร็จ
-      }, 2000); // Show spinner for 2 second minimum
+      setIsLoading(false);
     }
   };
-
+  
   return (
     <div className="container">
       <FontAwesomeIcon
@@ -125,6 +138,7 @@ const Login = () => {
         onClick={handleNext}
         disabled={isLoading} // ปิดการใช้งานปุ่มเมื่อกำลังโหลด
       >
+
         {isLoading ? "กำลังดำเนินการ..." : "เข้าสู่ระบบ"} {/* แสดงข้อความตามสถานะการโหลด */}
       </button>
 

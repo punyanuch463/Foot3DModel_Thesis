@@ -14,12 +14,6 @@ export default async function handler(req, res) {
       return res.status(400).json({ error: 'กรุณากรอก Verification Code  .' });
     }
 
-    // // ตรวจสอบว่า UserId เป็นตัวเลข
-    // if (typeof UserId !== 'number') {
-    //   console.warn('Invalid UserId type:', UserId);
-    //   return res.status(400).json({ error: 'UserId must be a number.'});
-    // }
-
     try {
       const [verificationRecords] = await db.execute(
         `SELECT * FROM EmailVerification 
