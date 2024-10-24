@@ -8,6 +8,7 @@ import "react-datepicker/dist/react-datepicker.css";
 import { VscHome, VscAccount, VscSearch, VscHistory } from "react-icons/vsc";
 import { PiScanFill } from "react-icons/pi";
 import { useRouter } from "next/router";
+import { faBell } from "@fortawesome/free-regular-svg-icons";
 
 
 const HistoryPage = () => {
@@ -36,15 +37,25 @@ const HistoryPage = () => {
 
   return (
     <div className="historyPage">
-      {/* Search Section */}
       <div className="searchBar">
-        <div className="header-with-back-icon">
+      <div className="header-with-back-icon">
+        <FontAwesomeIcon
+          icon={faArrowLeft}
+          className="back-icon"
+          onClick={() => router.push("/UserHistory")}
+        />
+        <div className="top-right-icon">
           <FontAwesomeIcon
-            icon={faArrowLeft}
-            className="back-icon"
-            onClick={() => router.back()}
+            icon={faBell} // Notification icon
+            className="notification-icon"
+          />
+          <img
+            src="/default-profile.png" // Change to your profile picture path
+            alt="Profile"
+            className="profile-pic"
           />
         </div>
+      </div>
         <h1>ประวัติการดำเนินการ</h1>
         {/* General Search */}
         <div className="searchItem">
@@ -159,7 +170,7 @@ const HistoryPage = () => {
               <p>อีเมล <span className="userDetail">{order.email}</span></p>
             </div>
             <div className="buttonGroup">
-              <button className="footInfoBtn">ข้อมูลเท้า</button>
+              <button className="footInfoBtn">ข้อมูลเท้า </button>
               <button className="view3DBtn">ภาพ 3D</button>
             </div>
           </div>

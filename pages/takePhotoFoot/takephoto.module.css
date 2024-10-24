@@ -1,13 +1,18 @@
 
- .footTexth1{
+.main {
+  font-family: "Sukhumvit Set", sans-serif;
+}
+
+.footTextTitle{
+  font-weight:900;
   font-size: 24px;
   color: #333;
   margin-top: 10px;
   text-align: center
  }
 
- .footText {
-  font-size: 14px;
+ .footTextSubTitle {
+  font-size: 18px;
   color: #333;
   margin-top: 10px;
   text-align: center
@@ -22,13 +27,14 @@
 
 .video-wrapper {
   position: relative;
-  width: 250px;
-  height: 350px;
-  margin-bottom: 20px;
+  width: 350px; /* เพิ่มขนาดความกว้าง */
+  height: 450px; /* เพิ่มขนาดความสูง */
   overflow: hidden;
   border: 2px solid #ddd;
   border-radius: 10px;
+  background-color: #000; /* เพิ่มสีพื้นหลังเป็นสีดำสำหรับวิดีโอ */
 }
+
 
 
 .video {
@@ -48,14 +54,14 @@
   align-items: center;
 }
 
-.frame-image {
+.frame-line {
   width: 100%;
   height: 100%;
-  pointer-events: none;
+  opacity: 0.7; /* เพิ่มความโปร่งใสของกรอบ */
 }
 
 .take-photo-button {
-  margin-top: 100px;
+  margin-top: 30px;
   width: 70px; /* ขนาดของวงกลม */
   height: 70px;
   border-radius: 50%; /* ทำให้เป็นวงกลม */
@@ -66,10 +72,6 @@
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2); /* เงาเล็กน้อย */
   transition: background-color 0.3s, transform 0.2s; /* การเปลี่ยนแปลงที่ราบรื่น */
 
-}
-
-.take-photo-button:hover {
-  background-color: #0056b3;
 }
 
 .canvas {
@@ -85,15 +87,18 @@
   border-radius: 10px;
 }
 
-
-.backButton {
-  margin-top: 44px;
-  margin: 10px;
-  background: none;
-  border: none;
-  cursor: pointer;
-  padding: 0;
+.backIcon {
+  width: 14px;
+  height: 16px;
+  cursor: pointer; /* เปลี่ยนเคอร์เซอร์เมื่อวางเมาส์ */
+  color: #102C57; /* สีของไอคอน */
+  font-size: 24px; /* ขนาดของไอคอน */
+  padding: 20px;
+  margin-top: 40px;
+  transition: color 0.3s ease, transform 0.2s ease; /* การเปลี่ยนสีและขนาดที่ราบรื่นเมื่อโฮเวอร์ */
 }
+
+
 .footInFrameAlert {
   position: absolute;
   top: 10px;
@@ -113,6 +118,6 @@
   text-align: center;
   line-height: 60px;
   position: relative;
-  margin-top: 100px;
+  margin-top: 20px;
 
 }

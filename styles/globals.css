@@ -24,8 +24,12 @@
 }
 
 @keyframes spin {
-  0% { transform: rotate(0deg); }
-  100% { transform: rotate(360deg); }
+  0% {
+    transform: rotate(0deg);
+  }
+  100% {
+    transform: rotate(360deg);
+  }
 }
 
 /* ปรับสไตล์ปุ่มเมื่อถูกปิดใช้งาน */
@@ -46,7 +50,8 @@ body {
 }
 
 .container {
-  padding: 20px;
+  padding: 24px;
+  padding-top: 20px;
   max-width: 400px;
   margin: auto;
   background: transparent;
@@ -173,20 +178,36 @@ input[type="password"]:focus {
   color: white;
   border: none;
   border-radius: 20px;
-  margin-top: 80px;
+  margin-top: 160px;
   cursor: pointer;
   font-size: 16px;
-  /* font-weight: bold; */
-  /* transition: background-color 0.3s ease; */
 }
 
-/* .primary-btn:hover {
-  background-color: #0a1c34;
-} */
+.primary-btn-login {
+  font-family: "Sukhumvit Set", sans-serif;
+  width: 100%;
+  padding: 10px;
+  background-color: #102c57;
+  color: white;
+  border: none;
+  border-radius: 20px;
+  margin-top: 385px;
+  cursor: pointer;
+  font-size: 16px;
+}
 
-/* .primary-btn:focus {
-  outline: none;
-} */
+.primary-btn-pdpa {
+  font-family: "Sukhumvit Set", sans-serif;
+  width: 100%;
+  padding: 10px;
+  background-color: #102c57;
+  color: white;
+  border: none;
+  border-radius: 20px;
+  margin-top: 222px;
+  cursor: pointer;
+  font-size: 16px;
+}
 
 .back-icon {
   margin-top: 40px;
@@ -309,10 +330,10 @@ select.open {
   /* background-color: #0070f3; */
   border: 2px solid #102c57;
 }
-
 .content-text {
   font-family: "Sukhumvit Set", sans-serif;
 }
+
 .checkbox-container {
   font-family: "Sukhumvit Set", sans-serif;
   margin: 20px 0;
@@ -325,9 +346,8 @@ select.open {
   cursor: pointer;
 }
 
-.checkbox-label span {
-  margin: 0;
-  font-family: "Sukhumvit", sans-serif;
+.custom-font {
+  font-family: "Sukhumvit Set", sans-serif; /* หรือ "Sukhumvit", sans-serif; */
 }
 
 .custom-checkbox {
@@ -350,10 +370,6 @@ select.open {
   color: white;
   font-size: 18px;
   line-height: 1;
-}
-
-.checkbox-container .checkbox-label span {
-  font-family: "Sukhumvit", sans-serif;
 }
 
 /* CompletePage */
@@ -445,7 +461,7 @@ select.open {
   grid-template-columns: repeat(2, 1fr); /* กำหนด 2 คอลัมน์ */
   gap: 20px; /* ระยะห่างระหว่างไอเท็ม */
   margin-top: 20px; /* เพิ่มระยะห่างจากส่วนอื่น */
-  padding: 24px
+  padding: 24px;
 }
 
 .content-item {
@@ -459,7 +475,7 @@ select.open {
   border-radius: 8px; /* มุมโค้ง */
   box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1); /* เงา */
   background-color: #102c57; /* สีพื้นหลัง */
-  color: #FEFAF6;
+  color: #fefaf6;
   transition: box-shadow 0.3s; /* เอฟเฟคตอน hover */
   font-size: 24px;
 }
@@ -467,7 +483,7 @@ select.open {
 .content-icon {
   font-size: 40px; /* ขนาดของไอคอน */
   margin-bottom: 8px; /* ระยะห่างจากข้อความ */
-  color: #FEFAF6; /* สีไอคอน */
+  color: #fefaf6; /* สีไอคอน */
 }
 
 /* HistoryPage */
@@ -528,7 +544,6 @@ select.open {
   /* border-radius: 0; */
   background-color: white;
   appearance: none; /* ซ่อนลูกศรดรอปดาวน์เดิม */
-  
 }
 
 .select-wrapper .select-icon {
@@ -580,7 +595,6 @@ select.open {
   display: flex;
   justify-content: space-between;
   align-items: center;
-
 }
 
 .orderCode {
@@ -590,7 +604,7 @@ select.open {
 }
 
 .orderStatus.pending {
-  background-color: #F9F1D8; /* สีเหลือง */
+  background-color: #f9f1d8; /* สีเหลือง */
   border: 1px solid #f1c40f;
   color: #f1c40f;
   border-radius: 20px;
@@ -598,7 +612,7 @@ select.open {
 }
 
 .orderStatus.completed {
-  background-color: #D4EFDF; /* สีเขียว */
+  background-color: #d4efdf; /* สีเขียว */
   border: 1px solid #27ae60;
   color: #27ae60;
   border-radius: 20px;
@@ -606,7 +620,7 @@ select.open {
 }
 
 .orderStatus.canceled {
-  background-color: #FBDDDD; /* สีแดง */
+  background-color: #fbdddd; /* สีแดง */
   border: 1px solid #e74c3c;
   color: #e74c3c;
   border-radius: 20px;
@@ -655,7 +669,6 @@ select.open {
   margin-left: 0px; /* Space between dot and text */
 }
 
-
 .orderStep:last-child::after {
   display: none; /* Hide the last dot's connecting line */
 }
@@ -667,8 +680,8 @@ select.open {
   margin-bottom: 15px; /* เพิ่มระยะห่างด้านล่าง */
 }
 
-.submitDateContainer svg{
-color: #555;
+.submitDateContainer svg {
+  color: #555;
 }
 
 .submitDate {
@@ -688,7 +701,7 @@ color: #555;
 }
 
 .userDetail {
-  color: #1D1D1D; /* สีของข้อความ */
+  color: #1d1d1d; /* สีของข้อความ */
 }
 
 .buttonGroup {
@@ -697,7 +710,8 @@ color: #555;
   gap: 10px;
 }
 
-.footInfoBtn, .view3DBtn {
+.footInfoBtn,
+.view3DBtn {
   background-color: transparent;
   border: 1px solid #102c57;
   font-family: "Sukhumvit Set", sans-serif;
@@ -710,32 +724,33 @@ color: #555;
   font-size: 16px;
 }
 
-.footInfoBtn:hover, .view3DBtn:hover {
+.footInfoBtn:hover,
+.view3DBtn:hover {
   background-color: #102c57;
   color: white;
 }
 
 /* InfoPage */
-.searchBar h1{
+.searchBar h1 {
   margin-bottom: 0px;
 }
 
-.searchBar p{
+.searchBar p {
   margin-top: 0px;
   font-size: 16px;
 }
 
-.detail-info{
+.detail-info {
   display: flex;
   align-items: center;
   gap: 10px; /* ระยะห่างระหว่างไอคอนและวันที่ */
 }
 
-.detail-info p{
+.detail-info p {
   margin-bottom: 0;
 }
 
-.detail-info svg{
+.detail-info svg {
   font-size: 24px;
 }
 
@@ -776,12 +791,12 @@ color: #555;
 .grid-item input {
   padding: 10px;
   width: 100%; /* ขยาย input ให้เต็มช่อง */
-  border: 1px solid #B7BCC6;
+  border: 1px solid #b7bcc6;
   border-radius: 20px; /* เพิ่มมุมโค้ง */
 }
 .info-card {
-  background-color: #B7BCC6;
-  border: 1px solid #B7BCC6;
+  background-color: #b7bcc6;
+  border: 1px solid #b7bcc6;
   padding: 10px;
   margin-top: 10px;
   border-radius: 8px;
@@ -796,7 +811,7 @@ color: #555;
   grid-template-columns: 1fr 3fr; /* คอลัมน์แรกสำหรับตัวอักษรภาษาอังกฤษ, คอลัมน์ที่สองสำหรับคำอธิบาย */
   gap: 10px;
   padding: 10px 0; /* เพิ่ม padding ด้านบนและล่าง */
-  border-bottom: 1px solid #FEFAF6; /* เส้นแบ่งระหว่างบรรทัด */
+  border-bottom: 1px solid #fefaf6; /* เส้นแบ่งระหว่างบรรทัด */
 }
 .info-letter {
   font-weight: bold;
@@ -862,4 +877,388 @@ color: #555;
   color: #888;
   font-size: 12px;
   margin-bottom: 8px;
+}
+
+/* UserFoot3D */
+.footModelImage {
+  width: 300px; /* กำหนดความกว้างของภาพ */
+  height: auto; /* ปรับความสูงตามสัดส่วน */
+  margin: 110px auto; /* ตั้งค่า margin บน-ล่าง 20px และให้ภาพอยู่กึ่งกลางแนวนอน */
+  margin-bottom: 110px;
+  padding: 10px; /* ตั้งค่า padding รอบภาพ */
+  display: block; /* ทำให้ภาพเป็น block element เพื่อง่ายต่อการจัดกึ่งกลาง */
+  border-radius: 10px; /* หากต้องการขอบมุมโค้ง */
+}
+/* signup ~ create account*/
+
+.alert {
+  padding: 10px;
+  border-radius: 5px;
+  font-size: 14px;
+  margin-bottom: 15px;
+  text-align: left;
+}
+
+/* Success message */
+.alert-success {
+  color: #155724;
+  background-color: #d4edda;
+  border: 1px solid #c3e6cb;
+}
+
+/* Error message */
+.alert-error {
+  color: #721c24;
+  background-color: #f8d7da;
+  border: 1px solid #f5c6cb;
+}
+
+.alert-warning {
+  color: #856404;
+  background-color: #fff3cd;
+  border: 1px solid #ffeeba;
+}
+
+.alert.error {
+  background-color: #f8d7da; /* สีพื้นหลังสำหรับข้อผิดพลาด */
+  color: #721c24; /* สีข้อความสำหรับข้อผิดพลาด */
+  border: 1px solid #f5c6cb; /* เส้นขอบสำหรับข้อผิดพลาด */
+}
+
+.alert.success {
+  background-color: #d4edda; /* สีพื้นหลังสำหรับความสำเร็จ */
+  color: #155724; /* สีข้อความสำหรับความสำเร็จ */
+  border: 1px solid #c3e6cb; /* เส้นขอบสำหรับความสำเร็จ */
+}
+/* AdFoot */
+.download-btn {
+  font-family: "Sukhumvit Set", sans-serif;
+  width: 100%;
+  padding: 10px;
+  background-color: #102c57;
+  color: white;
+  border: none;
+  border-radius: 20px;
+  margin-top: 16px;
+  margin-bottom: 16px;
+  cursor: pointer;
+  font-size: 16px;
+}
+
+.footButtonContainer {
+  display: flex;
+  justify-content: center; /* จัดปุ่มให้อยู่กลาง */
+  margin-top: 20px; /* เพิ่มระยะห่างด้านบนของปุ่ม */
+  margin-bottom: 20px; /* เพิ่มระยะห่างด้านล่างของปุ่ม */
+}
+
+.leftButton {
+  font-family: "Sukhumvit Set", sans-serif;
+  background: transparent;
+  border: 2px solid #102c57; /* เปลี่ยนสี border ตามที่ต้องการ */
+  border-radius: 20px 0 0 20px; /* ทำให้ปุ่มโค้งมนแค่บนและล่างซ้าย */
+  padding: 10px;
+  padding-left: 50px; /* ปรับขนาดปุ่ม */
+  font-size: 16px; /* ขนาดตัวอักษร */
+  color: #102c57; /* สีข้อความ */
+}
+
+.rightButton {
+  font-family: "Sukhumvit Set", sans-serif;
+  background: #102c57;
+  border: 2px solid #102c57; /* เปลี่ยนสี border ตามที่ต้องการ */
+  border-radius: 0 20px 20px 0; /* ทำให้ปุ่มโค้งมนแค่บนและล่างขวา */
+  padding: 10px;
+  padding-right: 50px; /* ปรับขนาดปุ่ม */
+  font-size: 16px; /* ขนาดตัวอักษร */
+  color: #fefaf6; /* สีข้อความ */
+}
+
+.title {
+  font-size: 24px;
+  font-weight: bold;
+  color: #333;
+  margin-top: 24px;
+  margin-bottom: 0;
+}
+
+.Ad-subtitle {
+  font-weight: 500;
+  font-size: 18px;
+  margin-top: 0;
+}
+
+/* AdInfo */
+
+.popup {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: rgba(0, 0, 0, 0.5); /* พื้นหลังแบบโปร่งใส */
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000; /* ให้ป๊อปอัปอยู่ด้านหน้าสุด */
+}
+
+.popupContent {
+  background-color: white;
+  padding: 20px;
+  border-radius: 8px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+  text-align: center;
+}
+
+.popupButtons {
+  margin-top: 20px;
+}
+
+.popupButtons button {
+  margin: 0 10px;
+  padding: 10px 20px;
+  background-color: #102c57; /* สีพื้นหลังของปุ่ม */
+  color: white;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+}
+
+.measurements-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 16px; /* ระยะห่างระหว่างกล่อง */
+  margin-top: 24px;
+}
+
+.measurement-field {
+  display: flex;
+  flex-direction: column;
+}
+
+.measurement-field label {
+  margin-bottom: 4px; /* ระยะห่างระหว่าง label และ input */
+}
+
+.foot-size-form__measurements {
+  margin: 16px;
+}
+
+.foot-size-form__measurements input {
+  background-color: #e0e0e0;
+}
+.measurement-field input {
+  /* สีพื้นฐานของ input */
+  background-color: lightgray; /* สีเทาเมื่อไม่สามารถแก้ไขได้ */
+  border: 1px solid #ccc;
+  padding: 8px;
+  border-radius: 4px;
+}
+
+.measurement-field input:focus {
+  border-color: #0070f3; /* สีของ border เมื่อ input ถูกเลือก */
+}
+
+.measurement-field input[readonly] {
+  background-color: #e0e0e0; /* สีเทาเมื่อไม่สามารถแก้ไขได้ */
+  cursor: not-allowed; /* เปลี่ยน cursor เพื่อแสดงว่าไม่สามารถแก้ไขได้ */
+  border-radius: 20px;
+}
+
+.measurement-field input:not([readonly]) {
+  background-color: white; /* สีขาวเมื่อสามารถแก้ไขได้ */
+  border-radius: 20px;
+}
+
+.navigation-buttons {
+  display: flex;
+  justify-content: center;
+}
+
+.circle-button {
+  background-color: #102c57; /* สีปุ่ม */
+  border: none;
+  color: white;
+  border-radius: 50%; /* ทำให้ปุ่มเป็นวงกลม */
+  width: 30px;
+  height: 30px;
+  font-size: 16px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+  margin-left: 10px;
+  margin-right: 10px;
+  margin-bottom: 10px;
+}
+
+.detailed {
+  display: flex;
+  justify-content: flex-start;
+}
+
+.detailed-text {
+  font-size: 18px;
+  text-decoration: underline;
+  color: #333;
+  margin-top: 5px;
+}
+.backButton {
+  margin: 10px;
+  background: none;
+  border: none;
+  cursor: pointer;
+  padding: 0;
+}
+
+.infButton {
+  background: none;
+  border: none;
+  width: 40px;
+  height: 40px;
+}
+
+.foot-size-form {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 20px;
+}
+
+.foot-size-form__image {
+  position: relative;
+  width: 300px;
+  height: 300px;
+  margin-bottom: 20px;
+}
+
+.foot-size-form__image img {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+}
+
+.foot-size-form__labels {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  pointer-events: none;
+}
+
+.foot-size-form__label {
+  position: absolute;
+  font-size: 16px;
+  font-weight: bold;
+  color: #333;
+}
+
+.foot-size-form__measurements {
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  gap: 10px;
+}
+
+.foot-size-form__measurement {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.foot-size-form__measurement label {
+  font-size: 16px;
+  font-weight: bold;
+  color: #333;
+}
+
+.foot-size-form__measurement input {
+  padding: 8px;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  width: 100px;
+}
+
+.foot-size-form__buttons {
+  display: flex;
+  gap: 40px;
+  margin-top: 20px;
+}
+
+.foot-size-form__buttons button {
+  padding: 10px 60px;
+  border: none;
+  border-radius: 20px;
+  background-color: #ffffff;
+  border: solid 1px;
+  color: #333;
+  font-size: 16px;
+  cursor: pointer;
+  margin-bottom: 20px;
+  font-family: "Sukhumvit Set", sans-serif;
+}
+
+.foot-size-form__buttons button:last-child {
+  background-color: #102c57;
+  color: #fff;
+  border: solid 1px;
+  border-color: #102c57;
+}
+
+.foot-measurement-table {
+  width: 100%;
+  border-collapse: collapse;
+  margin: 20px 0;
+}
+
+.foot-measurement-table th,
+.foot-measurement-table td {
+  padding: 10px;
+  border: 1px solid #ddd;
+  text-align: left;
+}
+
+.foot-measurement-table th {
+  background-color: #f2f2f2;
+  font-weight: bold;
+}
+
+.slideshow {
+  width: 100%;
+  max-width: 800px;
+  margin: 20px auto;
+}
+
+.tapbar {
+  display: flex;
+  justify-content: center;
+  margin-bottom: 20px;
+}
+
+.tap {
+  padding: 10px 20px;
+  margin: 0 5px;
+  cursor: pointer;
+  background-color: #f0f0f0;
+  border-radius: 5px;
+  border: 1px solid #ccc;
+}
+
+.tap.active {
+  background-color: #0070f3;
+  color: white;
+}
+
+.main {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
 }

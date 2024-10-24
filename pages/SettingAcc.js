@@ -23,7 +23,7 @@ const SettingAccount = () => {
     shoeSizeCM: '',
   });
 
-  const [message, setMessage] = useState('');
+  const [message, setMessage] = useState({ text: "", type: "" });
   const [isLoading, setIsLoading] = useState(false); // เพิ่ม state สำหรับการโหลด
 
   function getImageUrl(googleDriveLink) {
@@ -42,31 +42,43 @@ const SettingAccount = () => {
   const handleNext = async () => {
     // ตรวจสอบฟอร์ม
     if (!formData.fullName) {
-      setMessage('เกิดข้อผิดพลาด: กรุณากรอกข้อมูลชื่อ-นามสกุล');
+      setMessage({
+        text: "ข้อผิดพลาด: กรุณากรอกข้อมูลชื่อ-นามสกุล",
+        type: "error",
+      });
       return;
     }
-    if (!formData.gender) {
-      setMessage('เกิดข้อผิดพลาด: กรุณากรอกข้อมูลเพศ');
+    if (!userData.gender) {
+      setMessage({ text: "ข้อผิดพลาด: กรุณากรอกข้อมูลเพศ", type: "error" });
       return;
     }
-    if (!formData.age) {
-      setMessage('เกิดข้อผิดพลาด: กรุณากรอกข้อมูลอายุ');
+    if (!userData.age) {
+      setMessage({ text: "ข้อผิดพลาด: กรุณากรอกข้อมูลอายุ", type: "error" });
       return;
     }
-    if (!formData.heightCM) {
-      setMessage('เกิดข้อผิดพลาด: กรุณากรอกข้อมูลส่วนสูง');
+    if (!userData.heightCM) {
+      setMessage({ text: "ข้อผิดพลาด: กรุณากรอกข้อมูลส่วนสูง", type: "error" });
       return;
     }
-    if (!formData.shoeSizeEU) {
-      setMessage('เกิดข้อผิดพลาด: กรุณากรอกข้อมูลขนาดเท้า EU');
+    if (!userData.shoeSizeEU) {
+      setMessage({
+        text: "ข้อผิดพลาด: กรุณากรอกข้อมูลขนาดเท้าในหน่วย EU",
+        type: "error",
+      });
       return;
     }
-    if (!formData.shoeSizeCM) {
-      setMessage('เกิดข้อผิดพลาด: กรุณากรอกข้อมูลขนาดเท้า CM');
+    if (!userData.shoeSizeCM) {
+      setMessage({
+        text: "ข้อผิดพลาด: กรุณากรอกข้อมูลขนาดเท้าในหน่วย CM",
+        type: "error",
+      });
       return;
     }
     if (!isChecked) {
-      setMessage('เกิดข้อผิดพลาด: กรุณายอมรับข้อกำหนดและนโยบายความเป็นส่วนตัว');
+      setMessage({
+        text:'ข้อผิดพลาด: กรุณายอมรับข้อกำหนดและนโยบายความเป็นส่วนตัว',
+      type: "error"
+    });
       return;
     }
     
@@ -145,7 +157,7 @@ const SettingAccount = () => {
   };
 
   const handleCheckboxClick = () => {
-    setIsChecked(!isChecked);
+    router.push(`/PDPAConsentPage?UserId=${userId}`);
   };
 
   const handleChange = (e) => {
@@ -172,7 +184,9 @@ const SettingAccount = () => {
       </div>
       <h1>ตั้งค่าบัญชี</h1>
 
-      {message && <p className="alert">{message}</p>}
+      {message && (
+            <p className={`alert ${message.type}`}>{message.text}</p>
+        )}
 
       <div className="profile-image-wrapper">
         <input
@@ -200,7 +214,7 @@ const SettingAccount = () => {
           name="fullName"
           value={formData.fullName}
           onChange={handleChange}
-          placeholder="กรุณากรอกชื่อ-นามสกุล"
+        
           required
         />
       </div>
@@ -238,7 +252,7 @@ const SettingAccount = () => {
           value={formData.age}
           onChange={handleChange}
           min="0"
-          placeholder="กรุณากรอกอายุ"
+         
           required
         />
       </div>
@@ -253,7 +267,7 @@ const SettingAccount = () => {
           onChange={handleChange}
           step="0.01"
           min="0"
-          placeholder="กรุณากรอกส่วนสูง"
+       
           required
         />
       </div>
@@ -267,7 +281,7 @@ const SettingAccount = () => {
           value={formData.shoeSizeEU}
           onChange={handleChange}
           min="0"
-          placeholder="กรุณากรอกขนาดเท้า (EU)"
+         
           required
         />
       </div>
@@ -282,7 +296,7 @@ const SettingAccount = () => {
           onChange={handleChange}
           step="0.01"
           min="0"
-          placeholder="กรุณากรอกขนาดเท้า (เซนติเมตร)"
+        
           required
         />
       </div>
@@ -298,7 +312,7 @@ const SettingAccount = () => {
         </label>
       </div>
 
-      <button type="button" className="primary-btn" onClick={handleNext} disabled={isLoading} // ปิดการใช้งานปุ่มเมื่อกำลังโหลด
+      <button type="button" className="primary-btn" onClick={handleNext} disabled={isLoading} 
       >
         {isLoading ? "กำลังดำเนินการ..." : "ต่อไป"} {/* แสดงข้อความตามสถานะการโหลด */}
       </button>

@@ -14,7 +14,7 @@ const Login = () => {
     UserPassWord: '',
   });
 
-  const [message, setMessage] = useState('');
+  const [message, setMessage] = useState({ text: '', type: '' });
   const [isLoading, setIsLoading] = useState(false); // สถานะ loading
 
   useEffect(() => {}, [userId, router]);
@@ -33,12 +33,12 @@ const Login = () => {
 
   const handleNext = async () => {
     if (!formData.usernameOrEmail) {
-      setMessage('เกิดข้อผิดพลาด: กรุณากรอก Email ');
+      setMessage({ text: 'ข้อผิดพลาด: กรุณากรอกอีเมล', type: 'error' });
       return;
     }
 
     if (!formData.UserPassWord) {
-      setMessage('เกิดข้อผิดพลาด: กรุณากรอกรหัสผ่าน');
+      setMessage({ text: 'ข้อผิดพลาด: กรุณากรอกรหัสผ่าน', type: 'error' });
       return;
     }
 
@@ -60,15 +60,17 @@ const Login = () => {
       if (res.ok) {
         const userId = data.UserId; // ตรวจสอบให้แน่ใจว่า API ส่งกลับ UserId
 
+        setMessage({ text: 'เข้าสู่ระบบสำเร็จ', type: 'success' });
+
         setTimeout(() => {
           router.push(`/HomePage?UserId=${userId}`);
         }, 500);
       } else {
-        setMessage(`เกิดข้อผิดพลาด: ${data.message}`);
+        setMessage({ text: `ข้อผิดพลาด: ${data.message}`, type: 'error' });
       }
     } catch (error) {
       console.error('Error:', error);
-      setMessage('เกิดข้อผิดพลาดในการเข้าสู่ระบบ');
+      setMessage({ text: 'เกิดข้อผิดพลาดในการเข้าสู่ระบบ', type: 'error' });
     } finally {
       setTimeout(() => {
         setIsLoading(false); // ยกเลิกสถานะ loading หลังจากส่งข้อมูลเสร็จ
@@ -84,11 +86,11 @@ const Login = () => {
         onClick={() => window.history.back()}
       />
       <h1>เข้าสู่ระบบ</h1>
-      {message && <p className="alert">{message}</p>}
+      {message.text && <p className={`alert alert-${message.type}`}>{message.text}</p>}
 
       <div className="subtitle">
         <span>ยังไม่มีบัญชี? </span>
-        <a href="/">สร้างบัญชี</a>
+        <a href="/signup">สร้างบัญชี</a>
       </div>
       <div className="input-group">
         <label htmlFor="usernameOrEmail">ชื่อผู้ใช้หรืออีเมล</label>
@@ -121,7 +123,7 @@ const Login = () => {
 
       <button
         type="button"
-        className="primary-btn"
+        className="primary-btn-login"
         onClick={handleNext}
         disabled={isLoading} // ปิดการใช้งานปุ่มเมื่อกำลังโหลด
       >

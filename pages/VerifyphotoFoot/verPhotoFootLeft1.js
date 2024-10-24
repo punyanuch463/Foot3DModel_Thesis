@@ -1,58 +1,66 @@
-
 import React, { useEffect, useState } from "react";
-import styles from './verphoto.module.css'
-import Link from "next/link"
+import styles from "./verphoto.module.css";
+import Link from "next/link";
+import { useRouter } from "next/router";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { faArrowLeft } from "@fortawesome/free-solid-svg-icons";
 
 export default function About() {
   const [capturedImage, setCapturedImage] = useState(null);
   const [frameImage, setFrameImage] = useState(null);
+  const router = useRouter(); // ย้ายการเรียกใช้ router ไว้นอก useEffect
 
   useEffect(() => {
     // Retrieve image data and frame data from local storage
-    const image = localStorage.getItem('capturedImage');
-    const frame = localStorage.getItem('frameImage');
-    setCapturedImage(image);
-    setFrameImage(frame);
+    const image = localStorage.getItem("capturedImage");
+    const frame = localStorage.getItem("frameImage");
+    
+    // ตรวจสอบค่าที่ดึงมาว่ามีจริงหรือไม่
+    if (image) setCapturedImage(image);
+    if (frame) setFrameImage(frame);
   }, []);
 
-  return (
-    
-    <main className={styles.main}>
+  const handleBack = () => {
+    router.push("/HomePage");
+  };
 
-        <Link href="/HomePage" >
-      <button
-      className={styles.backButton}>
-        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#000" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="feather feather-arrow-left"><line x1="19" y1="12" x2="5" y2="12"></line><polyline points="12 19 5 12 12 5"></polyline></svg>
-        </button>
-      </Link>
-      <p className={styles.title}>ฝ่าเท้าข้างซ้าย</p>
-      {capturedImage && frameImage && (
+  return (
+    <main className={styles.main}>
+      <FontAwesomeIcon
+        icon={faArrowLeft}
+        className={styles.backIcon}
+        onClick={handleBack}
+      />
+      <p className={styles.footTextTitle}>ฝ่าเท้าข้างซ้าย</p>
+      {capturedImage && frameImage ? (
         <div className={styles.imageContainer}>
           <div className={styles.frameContainer}>
-            <img src={frameImage} alt="Frame" className={styles.frameImage} />
-            <img src={capturedImage} alt="Captured" className={styles.capturedImage} />
+            <img src={frameImage} alt="Frame" className={styles.frameLine} />
+            <img
+              src={capturedImage}
+              alt="Captured"
+              className={styles.capturedImage}
+            />
           </div>
         </div>
+      ) : (
+        <p>ยังไม่มีรูปภาพ</p> // แสดงข้อความเมื่อไม่มีภาพ
       )}
-        <p className={styles.verityfoot}>รูปภาพของคุณสามารถใช้งานได้</p>
+      <p className={styles.footTextSubTitle}>รูปภาพของคุณสามารถใช้งานได้</p>
 
-<footer className={styles.footer}>
-          <Link href="/takePhotoFoot/takePhotoFootLeft1" >
-     
-          <button className={styles.retake} >ถ่ายใหม่อีกครั้ง
+      <footer className={styles.footer}>
+        <Link href="/takePhotoFoot/takePhotoFootLeft1">
+          <button className={styles.retakeBtn}>ถ่ายใหม่อีกครั้ง</button>
+        </Link>
 
-          </button>
-          </Link>
-          
-          <Link href="/takePhotoFoot/takePhotoFootLeft2" >
-          <button className={styles.confirm} >ยืนยัน
-
-          </button>
-          </Link>
+        <Link href="/takePhotoFoot/takePhotoFootLeft2">
+          <button className={styles.confirmBtn}>ยืนยัน</button>
+        </Link>
       </footer>
     </main>
-  )
+  );
 }
+
 
 // import React, { useEffect, useState } from "react";
 // import styles from './verphoto.module.css';
@@ -121,8 +129,8 @@ export default function About() {
 
 //       <Link href="/HomePage">
 //         <button className={styles.backButton}>
-//           <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" 
-//                viewBox="0 0 24 24" fill="none" stroke="#000" strokeWidth="2" 
+//           <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24"
+//                viewBox="0 0 24 24" fill="none" stroke="#000" strokeWidth="2"
 //                strokeLinecap="round" strokeLinejoin="round" className="feather feather-arrow-left">
 //             <line x1="19" y1="12" x2="5" y2="12"></line>
 //             <polyline points="12 19 5 12 12 5"></polyline>
@@ -150,10 +158,10 @@ export default function About() {
 //         <Link href="/takePhotoFoot/takePhotoFootLeft1">
 //           <button className={styles.retake}>ถ่ายใหม่อีกครั้ง</button>
 //         </Link>
-        
-//         <button 
-//           className={styles.confirm} 
-//           onClick={handleConfirm} 
+
+//         <button
+//           className={styles.confirm}
+//           onClick={handleConfirm}
 //           disabled={isLoading}
 //         >
 //           {isLoading ? "Uploading..." : "ยืนยัน"}

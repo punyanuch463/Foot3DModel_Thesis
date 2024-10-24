@@ -1,9 +1,10 @@
 import React, { useState } from "react";
 import { useRouter } from "next/router";
 import styles from "styles/footdata.module.css";
-import { faBell } from "@fortawesome/free-regular-svg-icons";
+
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faArrowLeft, faChevronDown, faCheck  } from "@fortawesome/free-solid-svg-icons";
+import { faBell } from "@fortawesome/free-regular-svg-icons";
 
 const FootSizeForm = () => {
   const router = useRouter();
@@ -47,7 +48,9 @@ const FootSizeForm = () => {
 
   const handleCancel = () => {
     setShowPopup(false);
+    setIsEditable(false); // ตั้งค่าเป็น false เพื่อให้ text box กลับเป็น read-only
   };
+  
 
   const handleNext = () => {
     // เปลี่ยนรูปภาพเมื่อกดปุ่ม
@@ -76,7 +79,7 @@ const FootSizeForm = () => {
           <FontAwesomeIcon
             icon={faArrowLeft}
             className="back-icon"
-            onClick={() => router.back()}
+            onClick={() => router.push("/UserHistory")}
           />
           <div className="top-right-icon">
             <FontAwesomeIcon
@@ -84,7 +87,7 @@ const FootSizeForm = () => {
               className="notification-icon"
             />
             <img
-              src="/path/to/profile-picture.jpg" // Change to your profile picture path
+              src="/default-profile.png" // Change to your profile picture path
               alt="Profile"
               className="profile-pic"
             />
@@ -92,7 +95,7 @@ const FootSizeForm = () => {
         </div>
       
       <main className={styles.main}>
-        <p className={styles.title}>ข้อมูลเท้าของรหัสxxx</p>
+        <p className={styles.title}>ข้อมูลเท้าของคุณ แบบทดลอง</p>
 
         <div className={styles.detailed}>
           <button

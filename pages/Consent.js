@@ -2,7 +2,6 @@
 
 import React, { useState } from "react";
 import { useRouter } from "next/router";
-
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faArrowLeft } from "@fortawesome/free-solid-svg-icons";
 
@@ -10,8 +9,8 @@ const PDPAConsentPage = () => {
   const router = useRouter();
   const [isChecked, setIsChecked] = useState(false);
   const { UserId } = router.query;
-  const [message, setMessage] = useState('');
-  const [isLoading, setIsLoading] = useState(false); // สถานะการโหลด
+  const [message, setMessage] = useState({ text: '', type: '' });
+  const [isLoading, setIsLoading] = useState(false);
 
   const handleCheckboxClick = () => {
     setIsChecked(!isChecked);
@@ -19,17 +18,16 @@ const PDPAConsentPage = () => {
 
   const handleNext = () => {
     if (!isChecked) {
-      setMessage('กรุณายอมรับข้อกำหนดและนโยบายความเป็นส่วนตัว');
+      setMessage({ text: 'กรุณายอมรับข้อกำหนดและนโยบายความเป็นส่วนตัว', type: 'error' });
       return;
     }
 
-    // เริ่มแสดงหน้าการโหลด
     setIsLoading(true);
 
-    // ใช้ setTimeout เพื่อจำลองการโหลดข้อมูล (เช่น การเรียก API) จากนั้นเปลี่ยนหน้า
     setTimeout(() => {
+      setMessage({ text: '', type: '' }); // รีเซ็ตข้อความเมื่อเปลี่ยนหน้า
       router.push(`/CompletePage?UserId=${UserId}`);
-    }, 2000); // กำหนดเวลา 2 วินาทีเพื่อจำลองการโหลด
+    }, 2000);
   };
 
   return (
@@ -40,7 +38,11 @@ const PDPAConsentPage = () => {
         onClick={() => window.history.back()}
       />
       <h1>นโยบายความเป็นส่วนตัว</h1>
-      {message && <p className="alert">{message}</p>}
+      {message.text && (
+        <p className={`alert alert-${message.type}`}>
+          {message.text}
+        </p>
+      )}
       <p className="content-text">
         การใช้บริการนี้แสดงถึงความยินยอมและการยอมรับ
         <br />
@@ -54,23 +56,9 @@ const PDPAConsentPage = () => {
         จะเป็นไปตามวัตถุประสงค์ที่ชัดเจนและเกี่ยวข้องกับการให้บริการของเราเท่านั้น
       </p>
       <p className="content-text">
-        คุณสามารถเข้าถึงรายละเอียดเพิ่มเติมเกี่ยวกับ
+        นอกจากนี้เรายังมีมาตรการที่เหมาะสมเพื่อปกป้องข้อมูลของคุณจากการเข้าถึงโดยไม่ได้รับอนุญาตหรือการใช้
         <br />
-        การคุ้มครองข้อมูลส่วนบุคคลของคุณได้ในเมนูการตั้งค่าบัญชีของคุณ
-        โดยที่คุณมีสิทธิ์ในการตรวจสอบ
-        <br /> แก้ไข หรือลบข้อมูลของคุณ ตามที่คุณต้องการ
-      </p>
-      <p className="content-text">
-        นอกจากนี้เรายังมีมาตรการที่เหมาะสมเพื่อปกป้องข้อมูลของคุณจากการเข้าถึงโดยไม่ได้รับอนุญาต{" "}
-        <br />
-        หรือการใช้งานที่ไม่เหมาะสม
-      </p>
-      <p className="content-text">
-        การยอมรับนโยบายความเป็นส่วนตัวเป็นการสร้าง
-        <br />
-        ความไว้วางใจและความโปร่งใสระหว่างเราและคุณ
-        <br />
-        ในการใช้บริการของเรา
+        งานที่ไม่เหมาะสม
       </p>
       <p className="content-text">
         หากคุณมีคำถาม
@@ -81,11 +69,11 @@ const PDPAConsentPage = () => {
           <div className={`custom-checkbox ${isChecked ? 'checked' : ''}`}>
             {isChecked && <span className="checkmark">✓</span>}
           </div>
-          <span>ยอมรับข้อกำหนดและนโยบายความเป็นส่วนตัว</span>
+          <span className="custom-font">ยอมรับข้อกำหนดและนโยบายความเป็นส่วนตัว</span>
         </label>
       </div>
 
-      <button type="button" className="primary-btn" onClick={handleNext} disabled={isLoading}>
+      <button type="button" className="primary-btn-pdpa" onClick={handleNext} disabled={isLoading}>
         {isLoading ? "กำลังดำเนินการ..." : "ต่อไป"}
       </button>
 

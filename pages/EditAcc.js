@@ -10,7 +10,7 @@ const EditAccount = () => {
   const { UserId } = router.query; // รับ UserId จาก query parameters
   const [isGenderOpen, setIsGenderOpen] = useState(false);
   const [profileImageFile, setProfileImageFile] = useState(null); // เก็บไฟล์ภาพ
-  const [profileImage, setProfileImage] = useState(null);// สำหรับแสดงภาพก่อนอัปโหลด
+  const [profileImage, setProfileImage] = useState(null); // สำหรับแสดงภาพก่อนอัปโหลด
   const [userData, setUserData] = useState({
     fullName: "",
     gender: "",
@@ -19,29 +19,29 @@ const EditAccount = () => {
     shoeSizeEU: "",
     shoeSizeCM: "",
   });
-  
+
   const [isLoading, setIsLoading] = useState(true); // สถานะการโหลด
-  const [message, setMessage] = useState('');
-  
+  const [message, setMessage] = useState({ text: "", type: "" });
+
   function getImageUrl(imageUrl) {
     if (!imageUrl) return "default-profile.png"; // Fallback to default if imageUrl is null
-  
+
     // If the imageUrl is a base64 data URL, return it directly
     if (imageUrl.startsWith("data:")) {
       return imageUrl;
     }
-  
+
     // Attempt to extract the Google Drive file ID
     const match = imageUrl.match(/d\/(.*?)(\/|$)/);
     if (!match || match.length < 2) {
       console.error("Invalid Google Drive link format:", imageUrl);
       return "default-profile.png"; // Fallback to default if format is incorrect
     }
-  
+
     const fileId = match[1];
     return `https://images.weserv.nl/?url=drive.google.com/uc?id=${fileId}`;
   }
-  
+
   useEffect(() => {
     const fetchUserData = async () => {
       if (UserId) {
@@ -64,14 +64,14 @@ const EditAccount = () => {
               shoeSizeEU: data[0].FootSizeEU || "",
               shoeSizeCM: data[0].FootSizeCM || "",
             });
-            setProfileImage( data[0].ProfileImage || "default-profile.png");
+            setProfileImage(data[0].ProfileImage || "default-profile.png");
           } else {
             const errorData = await response.json();
-            setMessage(errorData.message || "Failed to fetch user data");
+            setMessage(errorData.message || "ไม่สามารถดึงข้อมูลผู้ใช้ได้");
           }
         } catch (err) {
           console.error("Error fetching user data:", err);
-           setMessage("An unexpected error occurred");
+          setMessage({ text: "An unexpected error occurred", type: "error" });
         } finally {
           setIsLoading(false); // Ensure loading state is set to false in both success and error cases
         }
@@ -92,36 +92,44 @@ const EditAccount = () => {
     }));
   };
 
-  
   const handleNext = async () => {
     // ตรวจสอบฟอร์ม
     if (!userData.fullName) {
-      setMessage('เกิดข้อผิดพลาด: กรุณากรอกข้อมูลชื่อ-นามสกุล');
+      setMessage({
+        text: "ข้อผิดพลาด: กรุณากรอกข้อมูลชื่อ-นามสกุล",
+        type: "error",
+      });
       return;
     }
     if (!userData.gender) {
-      setMessage('เกิดข้อผิดพลาด: กรุณากรอกข้อมูลเพศ');
+      setMessage({ text: "ข้อผิดพลาด: กรุณากรอกข้อมูลเพศ", type: "error" });
       return;
     }
     if (!userData.age) {
-      setMessage('เกิดข้อผิดพลาด: กรุณากรอกข้อมูลอายุ');
+      setMessage({ text: "ข้อผิดพลาด: กรุณากรอกข้อมูลอายุ", type: "error" });
       return;
     }
     if (!userData.heightCM) {
-      setMessage('เกิดข้อผิดพลาด: กรุณากรอกข้อมูลส่วนสูง');
+      setMessage({ text: "ข้อผิดพลาด: กรุณากรอกข้อมูลส่วนสูง", type: "error" });
       return;
     }
     if (!userData.shoeSizeEU) {
-      setMessage('เกิดข้อผิดพลาด: กรุณากรอกข้อมูลขนาดเท้า EU');
+      setMessage({
+        text: "ข้อผิดพลาด: กรุณากรอกข้อมูลขนาดเท้าในหน่วย EU",
+        type: "error",
+      });
       return;
     }
     if (!userData.shoeSizeCM) {
-      setMessage('เกิดข้อผิดพลาด: กรุณากรอกข้อมูลขนาดเท้า CM');
+      setMessage({
+        text: "ข้อผิดพลาด: กรุณากรอกข้อมูลขนาดเท้าในหน่วย CM",
+        type: "error",
+      });
       return;
     }
-    
+
     setIsLoading(true); // เริ่มการโหลด
-    setMessage(''); // ล้างข้อความข้อผิดพลาดก่อนหน้า
+    setMessage(""); // ล้างข้อความข้อผิดพลาดก่อนหน้า
 
     try {
       let uploadedImageUrl = null;
@@ -140,18 +148,18 @@ const EditAccount = () => {
 
         if (uploadRes.ok && uploadData.success) {
           uploadedImageUrl = getImageUrl(uploadData.imageUrl);
-        } else {
-          setMessage(`เกิดข้อผิดพลาดในการอัปโหลดภาพ: ${uploadData.message}`);
-          setIsLoading(false); // สิ้นสุดการโหลดเนื่องจากเกิดข้อผิดพลาด
+      } else {
+          setMessage({ text: `เกิดข้อผิดพลาดในการอัปโหลดภาพ: ${uploadData.message}`, type: "error" });
+          setIsLoading(false); 
           return;
-        }
+      }
       }
 
       // ส่งข้อมูลผู้ใช้ไปยัง API
-      const res = await fetch('/api/updateUser', {
-        method: 'POST',
+      const res = await fetch("/api/updateUser", {
+        method: "POST",
         headers: {
-          'Content-Type': 'application/json',
+          "Content-Type": "application/json",
         },
         body: JSON.stringify({
           UserId: UserId,
@@ -168,19 +176,18 @@ const EditAccount = () => {
           router.push(`/HomePage?UserId=${UserId}`);
         }, 500);
       } else {
-        setMessage(`เกิดข้อผิดพลาด: ${data.message}`);
+        setMessage({ text: `เกิดข้อผิดพลาด: ${data.message}`, type: "error" });
       }
     } catch (error) {
-      console.error('Error:', error);
-      setMessage('เกิดข้อผิดพลาดในการส่งข้อมูล');
-    }
-    finally {
+      console.error("Error:", error);
+      setMessage({ text: "เกิดข้อผิดพลาดในการส่งข้อมูล", type: "error" });
+    } finally {
       setTimeout(() => {
         setIsLoading(false); // ยกเลิกสถานะ loading หลังจากส่งข้อมูลเสร็จ
       }, 2000); // Show spinner for 2 second minimum
     }
   };
-  
+
   const toggleGenderVisibility = () => {
     setIsGenderOpen(!isGenderOpen);
   };
@@ -193,21 +200,19 @@ const EditAccount = () => {
     }
   };
 
-  // if (isLoading) {
-  //   return <div>Loading...</div>; // แสดงข้อความโหลด
-  // }
-
   return (
     <div className="container">
-        <FontAwesomeIcon
+      <FontAwesomeIcon
         icon={faArrowLeft}
         className="back-icon"
         onClick={() => window.history.back()}
       />
       <h1>ตั้งค่าบัญชี</h1>
-
-      {message && <p className="alert">{message}</p>}
-
+      {message && (
+            <p className={`alert ${message.type}`}>{message.text}</p>
+        )}
+     
+      {/* แก้ไขการแสดงผล message */}
       <div className="profile-image-wrapper">
         <input
           type="file"
@@ -225,7 +230,6 @@ const EditAccount = () => {
           ></div>
         </label>
       </div>
-
       <div className="input-group">
         <label htmlFor="fullName">ชื่อ-นามสกุล</label>
         <input
@@ -236,7 +240,6 @@ const EditAccount = () => {
           required
         />
       </div>
-
       <div className="input-group">
         <label htmlFor="gender">เพศ</label>
         <div className="select-wrapper-setting">
@@ -259,7 +262,6 @@ const EditAccount = () => {
           />
         </div>
       </div>
-
       <div className="input-group">
         <label htmlFor="age">อายุ</label>
         <input
@@ -271,7 +273,6 @@ const EditAccount = () => {
           required
         />
       </div>
-
       <div className="input-group">
         <label htmlFor="heightCM">ส่วนสูง (เซนติเมตร)</label>
         <input
@@ -283,7 +284,6 @@ const EditAccount = () => {
           required
         />
       </div>
-
       <div className="input-group">
         <label htmlFor="shoeSizeEU">ขนาดเท้า (EU)</label>
         <input
@@ -295,7 +295,6 @@ const EditAccount = () => {
           required
         />
       </div>
-
       <div className="input-group">
         <label htmlFor="shoeSizeCM">ขนาดเท้า (เซนติเมตร)</label>
         <input
@@ -307,13 +306,15 @@ const EditAccount = () => {
           required
         />
       </div>
-
-      <button type="button" className="primary-btn" onClick={handleNext} disabled={isLoading} // ปิดการใช้งานปุ่มเมื่อกำลังโหลด
+      <button
+        type="button"
+        className="primary-btn"
+        onClick={handleNext}
+        disabled={isLoading}
       >
-        {isLoading ? "กำลังดำเนินการ..." : "เเก้ไข"} {/* แสดงข้อความตามสถานะการโหลด */}
+        {isLoading ? "กำลังดำเนินการ..." : "เเก้ไข"}
       </button>
-
-     {isLoading && (
+      {isLoading && (
         <div className="loading-overlay">
           <div className="spinner"></div>
         </div>
@@ -322,6 +323,3 @@ const EditAccount = () => {
   );
 };
 export default EditAccount;
-
-
-

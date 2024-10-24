@@ -1,10 +1,11 @@
+"use client";
+import { useRef, useEffect, useState } from "react";
+import { useRouter } from "next/router";
+import styles from "./takephoto.module.css";
+import Link from "next/link";
 
-
-'use client'
-import { useRef, useEffect, useState } from 'react'
-import { useRouter } from 'next/router';
-import styles from './takephoto.module.css'
-import Link from "next/link"
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { faArrowLeft } from "@fortawesome/free-solid-svg-icons";
 
 export default function Homepage() {
   const videoRef = useRef(null);
@@ -42,7 +43,7 @@ export default function Homepage() {
 
         // Save image data and frame data to local storage
         localStorage.setItem('capturedImage', dataURL);
-        localStorage.setItem('frameImage', '/footright1.png'); // Path to your frame image
+        localStorage.setItem('frameImage', '/footleft1.png'); // Path to your frame image
 
         // Redirect to /about after saving image to local storage
         router.push('/VerifyphotoFoot/verPhotoFootRight1');
@@ -58,22 +59,25 @@ export default function Homepage() {
     setIsFootInFrame(false);
   };
 
+  const handleBack = () => {
+    router.push("/HomePage");
+  };
+
   return (
     <main className={styles.main}>
-       <Link href="/HomePage" >
-      <button
-      className={styles.backButton}>
-        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#000" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="feather feather-arrow-left"><line x1="19" y1="12" x2="5" y2="12"></line><polyline points="12 19 5 12 12 5"></polyline></svg>
-        </button>
-      </Link>
-      <p className={styles.footTexth1}>ฝ่าเท้าข้างขวา</p>
-      <p className={styles.footText}>โปรดวางเท้าของท่านให้อยู่ภายในกรอบ</p>
+        <FontAwesomeIcon
+          icon={faArrowLeft}
+          className={styles.backIcon} // เปลี่ยนจาก "back-icon" เป็น "styles.backIcon"
+          onClick={handleBack} // หากต้องการเพิ่มฟังก์ชันในการกลับ
+        />
+      <p className={styles.footTextTitle}>ฝ่าเท้าข้างขวา</p>
+      <p className={styles.footTextSubTitle}>โปรดวางเท้าของท่านให้อยู่ภายในกรอบ</p>
       
       <div className={styles.camera}>
         <div className={styles["video-wrapper"]}>
           <video ref={videoRef} className={styles.video} />
           <div className={styles.overlay} onMouseEnter={handleFootEnter} onMouseLeave={handleFootLeave}>
-            <img ref={frameRef} src="/footright1.png" alt="Frame" className={styles["frame-image"]} />
+            <img ref={frameRef} src="/footleft1.png" alt="Frame" className={styles["frame-line"]} />
           </div>
         </div>
         {isFootInFrame && (

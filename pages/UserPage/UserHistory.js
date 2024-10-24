@@ -279,7 +279,7 @@ const UserHistory = () => {
 
       {/* MenuBar */}
       <div className="menuBar">
-        <div className="menuItem" onClick={() => router.push("/")}>
+        <div className="menuItem" onClick={() => router.push("/HomePage")}>
           <VscHome />
           <p>หน้าหลัก</p>
         </div>

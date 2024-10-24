@@ -1,8 +1,9 @@
 import React, { useState } from "react";
 import { useRouter } from "next/router";
-import styles from "styles/footdata.module.css";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faArrowLeft, faBell } from "@fortawesome/free-solid-svg-icons";
+import { faArrowLeft } from "@fortawesome/free-solid-svg-icons";
+import { faBell } from "@fortawesome/free-regular-svg-icons";
+
 
 const UserFoot3D = () => {
   const router = useRouter();
@@ -22,33 +23,31 @@ const UserFoot3D = () => {
             className="notification-icon"
           />
           <img
-            src="/path/to/profile-picture.jpg" // เปลี่ยนเป็น path ของโปรไฟล์ที่ถูกต้อง
+            src="/default-profile.png" // Change to your profile picture path
             alt="Profile"
             className="profile-pic"
           />
         </div>
       </div>
 
-      <main className={styles.main}>
-        <p className={styles.title}>แบบจำลองเท้าสามมิติ</p>
+        <p className="title">แบบจำลองเท้าสามมิติ</p>
         {showModel && (
-          <div className={styles.modelContainer}>
+          <div className="modelContainer">
             {/* ตัวอย่างของการแสดงแบบจำลอง 3D */}
-            <p>นี่คือที่จะแสดงแบบจำลอง 3D ของเท้าของคุณ</p>
+            {/* <p>นี่คือที่จะแสดงแบบจำลอง 3D ของเท้าของคุณ</p> */}
             <img
-              src="/image/fR.png" // เปลี่ยนเป็นชื่อไฟล์จริงของภาพ
+              src="/FP1.png" // Change to your profile picture path
               alt="Foot Model"
-              className={styles.footModelImage} // ใส่คลาสเพื่อจัดการสไตล์
+              className="footModelImage"
             />
           </div>
         )}
 
         {/* ปุ่มซ้ายและขวาอยู่กลางหน้าจอ */}
-        <div className={styles.footButtonContainer}>
-          <button className={styles.leftButton}>ซ้าย</button>
-          <button className={styles.rightButton}>ขวา</button>
+        <div className="footButtonContainer">
+          <button className="leftButton">ซ้าย</button>
+          <button className="rightButton">ขวา</button>
         </div>
-      </main>
     </div>
   );
 };
