@@ -74,9 +74,7 @@ const CreateAccount = () => {
       console.error('Error:', error);
       setMessage('เกิดข้อผิดพลาดในการส่งข้อมูล');
     } finally {
-      setTimeout(() => {
-        setIsLoading(false); // ยกเลิกสถานะ loading หลังจากส่งข้อมูลเสร็จ
-      }, 2000); // Show spinner for 2 second minimum
+      setIsLoading(false); // หยุด loading หลังจากเสร็จสิ้นspinner for 2 second minimum
     }
   };
 

@@ -92,9 +92,7 @@ const CompletePage = () => {
       console.error('Error:', error);
       setMessage('เกิดข้อผิดพลาดในการส่งข้อมูล');
     } finally {
-      setTimeout(() => {
-        setIsLoading(false); // ยกเลิกสถานะการโหลดหลัง 2 วินาที
-      }, 2000);
+      setIsLoading(false);
     }
   };
 

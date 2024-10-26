@@ -41,23 +41,7 @@ const CreateAccount = () => {
     setMessage(''); // ล้างข้อความข้อผิดพลาดก่อนหน้า
 
     try {
-      
-      // ส่งอีเมลยืนยัน
-      const emailResponse = await fetch('/api/sendVerificationEmail', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({ email: userEmail }),
-      });
-
-      const emailData = await emailResponse.json();
-      if (emailResponse.ok) {
-        console.log(emailData.message);
-                setMessage('ส่งอีเมลยืนยันสำเร็จ!'); // "Verification email sent successfully!"
-      }
-
-      // สร้างบัญชีผู้ใช้
+            // สร้างบัญชีผู้ใช้
       const res = await fetch('/api/addUser', {
         method: 'POST',
         headers: {
@@ -69,10 +53,19 @@ const CreateAccount = () => {
       const data = await res.json();
 
       if (res.ok) {
-        // alert('สร้างบัญชีสำเร็จ! กำลังนำทางไปยังการตั้งค่าบัญชี...');
+        await fetch('/api/session', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({ userId: data.UserId }),
+        });
+  
+        // Navigate to the settings page
         setTimeout(() => {
-          router.push(`/SettingAccount?userId=${data.UserId}`);
+          router.push('/SettingAccount');
         }, 500);
+       
       } else {
         
         setMessage(`เกิดข้อผิดพลาดในการสร้างบัญชี: ${data.message}`);
@@ -81,9 +74,7 @@ const CreateAccount = () => {
       console.error('Error:', error);
       setMessage('เกิดข้อผิดพลาดในการส่งข้อมูล');
     } finally {
-      setTimeout(() => {
-        setIsLoading(false); // ยกเลิกสถานะ loading หลังจากส่งข้อมูลเสร็จ
-      }, 2000); // Show spinner for 2 second minimum
+      setIsLoading(false); // หยุด loading หลังจากเสร็จสิ้นspinner for 2 second minimum
     }
   };
 
@@ -147,6 +138,7 @@ const CreateAccount = () => {
             name="UserEmail" 
             value={formData.UserEmail} 
             onChange={handleChange} 
+            autoComplete="current-password"
             placeholder="กรุณากรอกอีเมล"
             required 
           />
@@ -161,6 +153,7 @@ const CreateAccount = () => {
               name="UserPassWord" 
               value={formData.UserPassWord} 
               onChange={handleChange} 
+             autoComplete="current-password"
               required 
               placeholder="กรุณากรอกรหัสผ่าน"
             />
