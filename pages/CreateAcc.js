@@ -10,17 +10,16 @@ import {
 } from "@fortawesome/free-solid-svg-icons";
 
 const CreateAccount = () => {
-  const [isLoading, setIsLoading] = useState(false); // สถานะการโหลด
+  const [isLoading, setIsLoading] = useState(false);
   const [passwordVisible, setPasswordVisible] = useState(false);
-  const [userEmail, setUserEmail] = useState('');
   const [formData, setFormData] = useState({
     UserName: '',
     UserPassWord: '',
     UserEmail: '',
     PhoneNumber: '',
   });
-  const [message, setMessage] = useState({ text: '', type: '' });
-  const router = useRouter(); // ใช้ useRouter สำหรับการนำทาง
+  const [message, setMessage] = useState(null);
+  const router = useRouter();
 
   const togglePasswordVisibility = () => {
     setPasswordVisible(!passwordVisible);
@@ -37,26 +36,10 @@ const CreateAccount = () => {
   const handleCreateAccount = async (e) => {
     e.preventDefault();
 
-    setIsLoading(true); // เริ่มการโหลด
-    setMessage({ text: '', type: '' }); // ล้างข้อความข้อผิดพลาดก่อนหน้า
+    setIsLoading(true);
+    setMessage(null);
 
     try {
-      // ส่งอีเมลยืนยัน
-      const emailResponse = await fetch('/api/sendVerificationEmail', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({ email: userEmail }),
-      });
-
-      const emailData = await emailResponse.json();
-      if (emailResponse.ok) {
-        console.log(emailData.message);
-        setMessage({ text: 'ส่งอีเมลยืนยันสำเร็จ', type: 'success' });
-      }
-
-      // สร้างบัญชีผู้ใช้
       const res = await fetch('/api/addUser', {
         method: 'POST',
         headers: {
@@ -68,37 +51,43 @@ const CreateAccount = () => {
       const data = await res.json();
 
       if (res.ok) {
+        await fetch('/api/session', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({ userId: data.UserId }),
+        });
+
         setTimeout(() => {
-          router.push(`/SettingAccount?userId=${data.UserId}`);
+          router.push('/SettingAcc');
         }, 500);
       } else {
-        setMessage({ text: `เกิดข้อผิดพลาดในการสร้างบัญชี: ${data.message}`, type: 'error' });
+        setMessage({ text: `เกิดข้อผิดพลาดในการสร้างบัญชี: ${data.message}`, type: "error" });
       }
     } catch (error) {
       console.error('Error:', error);
-      setMessage({ text: 'เกิดข้อผิดพลาดในการส่งข้อมูล', type: 'error' });
+      setMessage({ text: 'เกิดข้อผิดพลาดในการส่งข้อมูล', type: "error" });
     } finally {
-      setTimeout(() => {
-        setIsLoading(false); // ยกเลิกสถานะ loading หลังจากส่งข้อมูลเสร็จ
-      }, 2000); // Show spinner for 2 second minimum
+      setIsLoading(false);
     }
   };
 
-  const handleMsg = async () => {
+  const handleMsg = () => {
     if (!formData.UserName) {
-      setMessage({ text: 'ข้อผิดพลาด: กรุณากรอกข้อมูลชื่อ', type: 'error' });
+      setMessage({ text: 'เกิดข้อผิดพลาด: กรุณากรอกข้อมูลชื่อ', type: "error" });
       return;
     }
     if (!formData.UserEmail) {
-      setMessage({ text: 'ข้อผิดพลาด: กรุณากรอกข้อมูลอีเมล', type: 'error' });
+      setMessage({ text: 'เกิดข้อผิดพลาด: กรุณากรอกข้อมูลอีเมล', type: "error" });
       return;
     }
     if (!formData.UserPassWord) {
-      setMessage({ text: 'ข้อผิดพลาด: กรุณากรอกข้อมูลรหัสผ่าน', type: 'error' });
+      setMessage({ text: 'เกิดข้อผิดพลาด: กรุณากรอกข้อมูลรหัสผ่าน', type: "error" });
       return;
     }
     if (!formData.PhoneNumber) {
-      setMessage({ text: 'ข้อผิดพลาด: กรุณากรอกข้อมูลเบอร์โทรศัพท์', type: 'error' });
+      setMessage({ text: 'เกิดข้อผิดพลาด: กรุณากรอกข้อมูลเบอร์โทรศัพท์', type: "error" });
       return;
     }
   };
@@ -120,8 +109,8 @@ const CreateAccount = () => {
         <span>คุณมีบัญชีอยู่แล้ว? </span>
         <a href="/LoginPage">เข้าสู่ระบบ</a>
       </div>
-      {message.text && (
-        <p className={`alert alert-${message.type}`}>{message.text}</p>
+      {message && (
+        <p className={`alert ${message.type}`}>{message.text}</p>
       )}
       <form onSubmit={handleCreateAccount}>
         <div className="input-group">
@@ -132,7 +121,7 @@ const CreateAccount = () => {
             name="UserName" 
             value={formData.UserName} 
             onChange={handleChange} 
-          
+            placeholder="กรุณากรอกชื่อผู้ใช้งาน"
             required 
           />
         </div>
@@ -145,7 +134,8 @@ const CreateAccount = () => {
             name="UserEmail" 
             value={formData.UserEmail} 
             onChange={handleChange} 
-          
+            autoComplete="current-password"
+            placeholder="กรุณากรอกอีเมล"
             required 
           />
         </div>
@@ -159,8 +149,9 @@ const CreateAccount = () => {
               name="UserPassWord" 
               value={formData.UserPassWord} 
               onChange={handleChange} 
+             autoComplete="current-password"
               required 
-           
+              placeholder="กรุณากรอกรหัสผ่าน"
             />
             <FontAwesomeIcon
               icon={passwordVisible ? faEyeSlash : faEye}
@@ -178,22 +169,20 @@ const CreateAccount = () => {
             name="PhoneNumber" 
             value={formData.PhoneNumber} 
             onChange={handleChange} 
-          
+            placeholder="กรุณากรอกเบอร์โทร"
             required 
           />
         </div>
-        
-        {/* ปุ่มสำหรับสร้างบัญชีและส่งอีเมลยืนยัน */}
+
         <button 
           onClick={handleMsg} 
           type="submit" 
           className="primary-btn" 
-          disabled={isLoading} // ปิดการใช้งานปุ่มเมื่อกำลังโหลด
+          disabled={isLoading}
         >
-          {isLoading ? "กำลังดำเนินการ..." : "สร้างบัญชี"} {/* แสดงข้อความตามสถานะการโหลด */}
+          {isLoading ? "กำลังดำเนินการ..." : "สร้างบัญชี"}
         </button>
 
-        {/* แสดง loading overlay เมื่อกำลังโหลด */}
         {isLoading && (
           <div className="loading-overlay">
             <div className="spinner"></div>

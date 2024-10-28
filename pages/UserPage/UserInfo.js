@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { useRouter } from "next/router";
 import styles from "styles/footdata.module.css";
 
@@ -26,6 +26,44 @@ const FootSizeForm = () => {
     I: "30",
     footType: "",
   });
+  const [profileImage, setProfileImage] = useState("/default-profile.png"); // เริ่มต้นด้วยภาพ default
+  const [userId, setUserId] = useState(null);
+
+  // ดึงข้อมูล session และ user profile
+  useEffect(() => {
+    const fetchSessionData = async () => {
+      try {
+        const sessionRes = await fetch("/api/getSession");
+        const sessionData = await sessionRes.json();
+
+        if (sessionRes.ok && sessionData.userId) {
+          setUserId(sessionData.userId);
+          fetchUserData(sessionData.userId); // ดึงข้อมูล user profile ตาม userId
+        }
+      } catch (error) {
+        console.error("Error fetching session:", error);
+      }
+    };
+
+    const fetchUserData = async (userId) => {
+      try {
+        const response = await fetch(`/api/user`, {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ userId: userId }),
+        });
+
+        if (response.ok) {
+          const data = await response.json();
+          setProfileImage(data[0].ProfileImage || "/default-profile.png");
+        }
+      } catch (error) {
+        console.error("Error fetching user data:", error);
+      }
+    };
+
+    fetchSessionData();
+  }, []);
 
   const handleChange = (event) => {
     const { name, value } = event.target;
@@ -43,7 +81,7 @@ const FootSizeForm = () => {
   const handleConfirm = () => {
     console.log("Foot measurements:", footMeasurements);
     setShowPopup(false);
-    router.push("/HomePage");
+    router.push("/UserPage/UserFoot");
   };
 
   const handleCancel = () => {
@@ -79,15 +117,15 @@ const FootSizeForm = () => {
           <FontAwesomeIcon
             icon={faArrowLeft}
             className="back-icon"
-            onClick={() => router.push("/UserHistory")}
+            onClick={() => router.push("/UserPage/UserHistory")}
           />
           <div className="top-right-icon">
             <FontAwesomeIcon
               icon={faBell} // Notification icon
               className="notification-icon"
             />
-            <img
-              src="/default-profile.png" // Change to your profile picture path
+             <img
+              src={profileImage}
               alt="Profile"
               className="profile-pic"
             />
@@ -106,7 +144,9 @@ const FootSizeForm = () => {
               <path d="M256 512A256 256 0 1 0 256 0a256 256 0 1 0 0 512zM216 336l24 0 0-64-24 0c-13.3 0-24-10.7-24-24s10.7-24 24-24l48 0c13.3 0 24 10.7 24 24l0 88 8 0c13.3 0 24 10.7 24 24s-10.7 24-24 24l-80 0c-13.3 0-24-10.7-24-24s10.7-24 24-24zm40-208a32 32 0 1 1 0 64 32 32 0 1 1 0-64z" />
             </svg>
           </button>
-          <p className={styles["detailed-text"]}>คำอธิบายเพิ่มเติม</p>
+          <p className={styles["detailed-text"]}
+           onClick={() => setShowTable(!showTable)}
+           >คำอธิบายเพิ่มเติม</p>
         </div>
 
         <form onSubmit={handleSubmit}>

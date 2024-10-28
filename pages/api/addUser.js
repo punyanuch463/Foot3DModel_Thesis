@@ -1,9 +1,17 @@
 import db from './db';
 import nodemailer from 'nodemailer';
+import bcrypt from 'bcrypt';
 
 // ฟังก์ชันในการสร้างรหัสยืนยันแบบสุ่ม
 const generateCode = () => {
   return Math.random().toString(36).substring(2, 8).toUpperCase(); // สุ่มรหัส 6 หลัก
+};
+
+
+// ฟังก์ชันในการตรวจสอบความแข็งแกร่งของรหัสผ่าน
+const isStrongPassword = (password) => {
+  const strongPasswordRegex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/;
+  return strongPasswordRegex.test(password);
 };
 
 export default async function handler(req, res) {
@@ -22,15 +30,12 @@ export default async function handler(req, res) {
     }
 
     // ตรวจสอบความยาวรหัสผ่าน
-    if (UserPassWord.length < 6) {
-      return res.status(400).json({ message: 'รหัสผ่านจะต้องมีความยาวอย่างน้อย 6 ตัวอักษรขึันไป' });
+    if (!isStrongPassword(UserPassWord)) {
+      return res.status(400).json({ message: 'รหัสผ่านต้องมีความยาวอย่างน้อย 8 ตัวอักษร และรวมตัวอักษรใหญ่ ตัวอักษรเล็ก ตัวเลข และสัญลักษณ์พิเศษ' });
     }
 
-    // Hash รหัสผ่านก่อนเก็บ (แนะนำให้ใช้ bcrypt หรือ library อื่นๆ)
-    // ตัวอย่างใช้ bcrypt
-    // cons         t bcrypt = require('bcrypt');
-    // const saltRounds = 10;
-    // const hashedPassword = await bcrypt.hash(UserPassWord, saltRounds);
+    const saltRounds = 10;
+    const hashedPassword = await bcrypt.hash(UserPassWord, saltRounds);
 
     const connection = await db.getConnection(); // สมมติว่า db.getConnection() คืนค่า Promise ของการเชื่อมต่อ
 
@@ -50,7 +55,7 @@ export default async function handler(req, res) {
         INSERT INTO User (UserName, UserPassWord, UserEmail, PhoneNumber) 
         VALUES (?, ?, ?, ?)
       `;
-      const userValues = [UserName, UserPassWord, UserEmail, PhoneNumber || null];
+      const userValues = [UserName, hashedPassword, UserEmail, PhoneNumber || null];
       const [userResult] = await connection.execute(insertUserQuery, userValues);
       const newUserId = userResult.insertId;
 
@@ -77,9 +82,10 @@ export default async function handler(req, res) {
       const mailOptions = {
         from: process.env.EMAIL_USER,
         to: UserEmail,
-        subject: 'Email Verification',
-        text: `Hello ${UserName},\n\nYour verification code is: ${verificationCode}\n\nThis code will expire in 1 hour.\n\nThank you!`,
+        subject: 'การยืนยันอีเมล',
+        text: `สวัสดี ${UserName} ค่ะ,\n\nรหัสการยืนยันของคุณคือ: ${verificationCode}\n\nรหัสนี้จะหมดอายุใน 1 ชั่วโมง.\n\nขอบคุณค่ะ!`,
       };
+      
 
       await transporter.sendMail(mailOptions);
 

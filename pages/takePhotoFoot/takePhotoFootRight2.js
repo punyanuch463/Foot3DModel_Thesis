@@ -49,7 +49,7 @@ export default function Homepage() {
 
         // Save image data and frame data to local storage
         localStorage.setItem("capturedImage", dataURL);
-        localStorage.setItem("frameImage", "/footleft2.png"); // Path to your frame image
+        localStorage.setItem("frameImage", "/footright2.png"); // Path to your frame image
 
         // Redirect to /about after saving image to local storage
         router.push("/VerifyphotoFoot/verPhotoFootRight2");
@@ -91,7 +91,7 @@ export default function Homepage() {
           >
             <img
               ref={frameRef}
-              src="/footleft2.png"
+              src="/footright2.png"
               alt="Frame"
               className={styles["frame-Line"]}
             />

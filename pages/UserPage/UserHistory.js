@@ -1,5 +1,5 @@
 "use client";
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faArrowLeft, faChevronDown, faTimes } from "@fortawesome/free-solid-svg-icons";
 import { faBell, faClock  } from "@fortawesome/free-regular-svg-icons";
@@ -20,6 +20,8 @@ const UserHistory = () => {
   const [expandedDetail, setExpandedDetail] = useState(null); // Track expanded detail
   const router = useRouter();
   const [showNotification, setShowNotification] = useState(false);
+  const [profileImage, setProfileImage] = useState("/default-profile.png"); // เริ่มต้นด้วยภาพ default
+  const [userId, setUserId] = useState(null);
 
   const handleSearch = () => {
     console.log({
@@ -29,13 +31,60 @@ const UserHistory = () => {
       endDate,
     });
   };
+ // ดึงข้อมูล session และ user profile
+ useEffect(() => {
+  const fetchSessionData = async () => {
+    try {
+      const sessionRes = await fetch("/api/getSession");
+      const sessionData = await sessionRes.json();
+
+      if (sessionRes.ok && sessionData.userId) {
+        setUserId(sessionData.userId);
+        fetchUserData(sessionData.userId); // ดึงข้อมูล user profile ตาม userId
+      }
+    } catch (error) {
+      console.error("Error fetching session:", error);
+    }
+  };
+
+  const fetchUserData = async (userId) => {
+    try {
+      const response = await fetch(`/api/user`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ userId: userId }),
+      });
+
+      if (response.ok) {
+        const data = await response.json();
+        setProfileImage(data[0].ProfileImage || "/default-profile.png");
+      }
+    } catch (error) {
+      console.error("Error fetching user data:", error);
+    }
+  };
+
+  fetchSessionData();
+}, []);
 
   const goToEditAccount = () => {
-    router.push("/EditAccount");
+    router.push("/EditAcc");
   };
 
   const goToHistoryPage = () => {
-    router.push("/UserHistory");
+    router.push("/UserPage/UserHistory");
+  };
+
+  const goToHomePage = () => {
+    router.push("/HomePage");
+  };
+
+  const goTosearch = () => {
+    router.push("/search");
+  };
+
+  const goTotakePhotoFoot = () => {
+    router.push("/takePhotoFoot/takePhotoFootLeft1");
   };
 
   const toggleExpandOrder = (index) => {
@@ -125,11 +174,18 @@ const UserHistory = () => {
               <p className="notification-time">ตอนนี้</p>
             </div>
           )}
-            <img
-              src="/default-profile.png" // Change to your profile picture path
+          
+          <img
+              src={profileImage}
               alt="Profile"
               className="profile-pic"
             />
+
+            {/* <img
+              src="/default-profile.png" // Change to your profile picture path
+              alt="Profile"
+              className="profile-pic"
+            /> */}
           </div>
         </div>
         <h1>ประวัติการดำเนินการ</h1>
@@ -279,15 +335,15 @@ const UserHistory = () => {
 
       {/* MenuBar */}
       <div className="menuBar">
-        <div className="menuItem" onClick={() => router.push("/HomePage")}>
+        <div className="menuItem" onClick={goToHomePage}>
           <VscHome />
           <p>หน้าหลัก</p>
         </div>
-        <div className="menuItem" onClick={() => router.push("/search")}>
+        <div className="menuItem" onClick={goTosearch}>
           <VscSearch />
           <p>ค้นหา</p>
         </div>
-        <div className="menuItem" onClick={() => router.push("/takePhotoFoot/takePhotoFootLeft1")}>
+        <div className="menuItem" onClick={goTotakePhotoFoot}>
           <PiScanFill />
           <p>สแกน</p>
         </div>

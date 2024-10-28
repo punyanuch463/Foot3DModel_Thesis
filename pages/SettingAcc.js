@@ -8,7 +8,7 @@ import { faArrowLeft, faChevronDown, faCheck } from "@fortawesome/free-solid-svg
 
 const SettingAccount = () => {
   const router = useRouter();
-  const { userId } = router.query; // รับ UserId จาก query params
+  const [userId, setUserId] = useState(null); // Store the userId from the cookie
 
   const [isGenderOpen, setIsGenderOpen] = useState(false);
   const [profileImageFile, setProfileImageFile] = useState(null); // เก็บไฟล์ภาพ
@@ -26,18 +26,34 @@ const SettingAccount = () => {
   const [message, setMessage] = useState({ text: "", type: "" });
   const [isLoading, setIsLoading] = useState(false); // เพิ่ม state สำหรับการโหลด
 
-  function getImageUrl(googleDriveLink) {
-    const fileIdMatch = googleDriveLink.match(/d\/(.*?)(\/|$)/);
-    if (fileIdMatch && fileIdMatch[1]) {
-      const fileId = fileIdMatch[1];
-      return `https://images.weserv.nl/?url=drive.google.com/uc?id=${fileId}`;
-    }
-    return googleDriveLink; // คืนลิงก์เดิมถ้าไม่พบไฟล์ ID
-  }
 
   useEffect(() => {
-    // สามารถเพิ่มฟังก์ชัน fetch ข้อมูลผู้ใช้ที่นี่ถ้าจำเป็น
-  }, [userId, router]);
+    let isMounted = true; // ตัวแปรเพื่อบันทึกสถานะการ mount
+
+    const fetchSession = async () => {
+      try {
+        const res = await fetch('/api/getSession');
+        const data = await res.json();
+
+        if (res.ok && isMounted) {
+          setUserId(data.userId);
+        } else if (isMounted) {
+          setMessage('ไม่พบข้อมูลผู้ใช้งาน กรุณาล็อกอินใหม่');
+        }
+      } catch (error) {
+        console.error('Error fetching session:', error);
+        if (isMounted) {
+          setMessage('ไม่พบข้อมูลผู้ใช้งาน กรุณาล็อกอินใหม่');
+        }
+      }
+    };
+
+    fetchSession();
+
+    return () => {
+      isMounted = false; // Cleanup: ยกเลิกการทำงานเมื่อ unmount
+    };
+  }, []); // Empty dependency array to run this effect once
 
   const handleNext = async () => {
     // ตรวจสอบฟอร์ม
@@ -48,26 +64,26 @@ const SettingAccount = () => {
       });
       return;
     }
-    if (!userData.gender) {
+    if (!formData.gender) {
       setMessage({ text: "ข้อผิดพลาด: กรุณากรอกข้อมูลเพศ", type: "error" });
       return;
     }
-    if (!userData.age) {
+    if (!formData.age) {
       setMessage({ text: "ข้อผิดพลาด: กรุณากรอกข้อมูลอายุ", type: "error" });
       return;
     }
-    if (!userData.heightCM) {
+    if (!formData.heightCM) {
       setMessage({ text: "ข้อผิดพลาด: กรุณากรอกข้อมูลส่วนสูง", type: "error" });
       return;
     }
-    if (!userData.shoeSizeEU) {
+    if (!formData.shoeSizeEU) {
       setMessage({
         text: "ข้อผิดพลาด: กรุณากรอกข้อมูลขนาดเท้าในหน่วย EU",
         type: "error",
       });
       return;
     }
-    if (!userData.shoeSizeCM) {
+    if (!formData.shoeSizeCM) {
       setMessage({
         text: "ข้อผิดพลาด: กรุณากรอกข้อมูลขนาดเท้าในหน่วย CM",
         type: "error",
@@ -88,12 +104,13 @@ const SettingAccount = () => {
     try {
       let uploadedImageUrl = null;
 
-      // ถ้ามีไฟล์ภาพที่เลือก ให้ทำการอัปโหลด
+      // If a profile image has been selected, upload it
       if (profileImageFile) {
         const uploadFormData = new FormData();
         uploadFormData.append("file", profileImageFile);
+        uploadFormData.append("UserId", userId); // Use userId from the session
 
-        const uploadRes = await fetch("/api/uploadToDrive", {
+        const uploadRes = await fetch("/api/uploadToFolder", {
           method: "POST",
           body: uploadFormData,
         });
@@ -101,10 +118,10 @@ const SettingAccount = () => {
         const uploadData = await uploadRes.json();
 
         if (uploadRes.ok && uploadData.success) {
-          uploadedImageUrl = getImageUrl(uploadData.imageUrl);
+          uploadedImageUrl = uploadData.imageUrl; // Get the image URL from the response
         } else {
           setMessage(`เกิดข้อผิดพลาดในการอัปโหลดภาพ: ${uploadData.message}`);
-          setIsLoading(false); // สิ้นสุดการโหลดเนื่องจากเกิดข้อผิดพลาด
+          setIsLoading(false); // Stop loading due to error
           return;
         }
       }
@@ -116,7 +133,7 @@ const SettingAccount = () => {
           'Content-Type': 'application/json',
         },
         body: JSON.stringify({
-          UserId: userId,
+          userId: userId, // Use userId from the session
           ...formData,
           profileImage: uploadedImageUrl, // ส่ง URL ของรูปที่อัปโหลด
         }),
@@ -125,22 +142,36 @@ const SettingAccount = () => {
       const data = await res.json();
 
       if (res.ok) {
-        // alert('อัปเดตบัญชีสำเร็จ! กำลังนำทางไปยังหน้า Consent...');
-        // นำทางไปยังหน้า PDPAConsentPage หลังจากอัปเดตสำเร็จ
-        setTimeout(() => {
-          router.push(`/PDPAConsentPage?UserId=${userId}`);
-        }, 500);
+        // Fetch session after updating user data
+        const sessionRes = await fetch('/api/getSession');
+        const sessionData = await sessionRes.json();
+        
+        if (sessionRes.ok) {
+          console.log('Session Data:', sessionData);
+          
+          // If you need to do something with session data, do it here
+          await fetch('/api/session', {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({ userId: sessionData.userId }),
+          });
+  
+          setTimeout(() => {
+            router.push(`/Consent`);
+          }, 500);
+        } else {
+          setMessage('ไม่พบข้อมูลเซสชัน กรุณาล็อกอินใหม่');
+        }
       } else {
         setMessage(`เกิดข้อผิดพลาด: ${data.message}`);
       }
     } catch (error) {
       console.error('Error:', error);
       setMessage('เกิดข้อผิดพลาดในการส่งข้อมูล');
-    }
-    finally {
-      setTimeout(() => {
-        setIsLoading(false); // ยกเลิกสถานะ loading หลังจากส่งข้อมูลเสร็จ
-      }, 2000); // Show spinner for 2 second minimum
+    } finally {
+      setIsLoading(false);
     }
   };
 
@@ -157,9 +188,9 @@ const SettingAccount = () => {
   };
 
   const handleCheckboxClick = () => {
-    router.push(`/PDPAConsentPage?UserId=${userId}`);
+    setIsChecked(!isChecked);
   };
-
+  
   const handleChange = (e) => {
     const { name, value } = e.target;
     setFormData(prev => ({

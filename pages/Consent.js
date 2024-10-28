@@ -1,33 +1,81 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { useRouter } from "next/router";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faArrowLeft } from "@fortawesome/free-solid-svg-icons";
+import cookie from 'cookie';
 
 const PDPAConsentPage = () => {
   const router = useRouter();
   const [isChecked, setIsChecked] = useState(false);
-  const { UserId } = router.query;
-  const [message, setMessage] = useState({ text: '', type: '' });
+  const [UserId, setUserId] = useState(null);
+  const [message, setMessage] = useState({ text: "", type: "" }); // Structured message format
   const [isLoading, setIsLoading] = useState(false);
+
+  useEffect(() => {
+    const checkSession = async () => {
+      try {
+        const response = await fetch('/api/getSession');
+        if (response.ok) {
+          const data = await response.json();
+          setUserId(data.userId);
+        } else {
+          throw new Error('ไม่พบ session');
+        }
+      } catch (error) {
+        console.error('Error fetching session:', error);
+        setMessage({ text: 'ไม่พบ session โปรดเข้าสู่ระบบใหม่', type: 'error' });
+      }
+    };
+    checkSession();
+  }, []);
 
   const handleCheckboxClick = () => {
     setIsChecked(!isChecked);
   };
 
-  const handleNext = () => {
+  const handleNext = async () => {
     if (!isChecked) {
-      setMessage({ text: 'กรุณายอมรับข้อกำหนดและนโยบายความเป็นส่วนตัว', type: 'error' });
+      setMessage({
+        text: 'กรุณายอมรับข้อกำหนดและนโยบายความเป็นส่วนตัว',
+        type: 'error'
+      });
+      return;
+    }
+
+    if (!UserId) {
+      setMessage({ text: 'ไม่พบข้อมูลผู้ใช้ โปรดเข้าสู่ระบบใหม่', type: 'error' });
       return;
     }
 
     setIsLoading(true);
+    
+    try {
+      const sessionRes = await fetch('/api/getSession');
+      const sessionData = await sessionRes.json();
+      
+      if (sessionRes.ok) {
+        await fetch('/api/session', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({ userId: sessionData.userId }),
+        });
 
-    setTimeout(() => {
-      setMessage({ text: '', type: '' }); // รีเซ็ตข้อความเมื่อเปลี่ยนหน้า
-      router.push(`/CompletePage?UserId=${UserId}`);
-    }, 2000);
+        setTimeout(() => {
+          router.push(`/CompletePage`);
+        }, 2000);
+      } else {
+        setMessage({ text: 'ไม่พบข้อมูลเซสชัน กรุณาล็อกอินใหม่', type: 'error' });
+      }
+    } catch (error) {
+      console.error('Error:', error);
+      setMessage({ text: 'เกิดข้อผิดพลาดในการสร้างเซสชัน', type: 'error' });
+    } finally {
+      setIsLoading(false);
+    }
   };
 
   return (
@@ -39,7 +87,7 @@ const PDPAConsentPage = () => {
       />
       <h1>นโยบายความเป็นส่วนตัว</h1>
       {message.text && (
-        <p className={`alert alert-${message.type}`}>
+        <p className={`alert ${message.type}`}>
           {message.text}
         </p>
       )}
@@ -56,9 +104,23 @@ const PDPAConsentPage = () => {
         จะเป็นไปตามวัตถุประสงค์ที่ชัดเจนและเกี่ยวข้องกับการให้บริการของเราเท่านั้น
       </p>
       <p className="content-text">
-        นอกจากนี้เรายังมีมาตรการที่เหมาะสมเพื่อปกป้องข้อมูลของคุณจากการเข้าถึงโดยไม่ได้รับอนุญาตหรือการใช้
+        คุณสามารถเข้าถึงรายละเอียดเพิ่มเติมเกี่ยวกับ
         <br />
-        งานที่ไม่เหมาะสม
+        การคุ้มครองข้อมูลส่วนบุคคลของคุณได้ในเมนูการตั้งค่าบัญชีของคุณ
+        โดยที่คุณมีสิทธิ์ในการตรวจสอบ
+        <br /> แก้ไข หรือลบข้อมูลของคุณ ตามที่คุณต้องการ
+      </p>
+      <p className="content-text">
+        นอกจากนี้เรายังมีมาตรการที่เหมาะสมเพื่อปกป้องข้อมูลของคุณจากการเข้าถึงโดยไม่ได้รับอนุญาต{" "}
+        <br />
+        หรือการใช้งานที่ไม่เหมาะสม
+      </p>
+      <p className="content-text">
+        การยอมรับนโยบายความเป็นส่วนตัวเป็นการสร้าง
+        <br />
+        ความไว้วางใจและความโปร่งใสระหว่างเราและคุณ
+        <br />
+        ในการใช้บริการของเรา
       </p>
       <p className="content-text">
         หากคุณมีคำถาม
@@ -69,11 +131,11 @@ const PDPAConsentPage = () => {
           <div className={`custom-checkbox ${isChecked ? 'checked' : ''}`}>
             {isChecked && <span className="checkmark">✓</span>}
           </div>
-          <span className="custom-font">ยอมรับข้อกำหนดและนโยบายความเป็นส่วนตัว</span>
+          <span>ยอมรับข้อกำหนดและนโยบายความเป็นส่วนตัว</span>
         </label>
       </div>
 
-      <button type="button" className="primary-btn-pdpa" onClick={handleNext} disabled={isLoading}>
+      <button type="button" className="primary-btn" onClick={handleNext} disabled={isLoading}>
         {isLoading ? "กำลังดำเนินการ..." : "ต่อไป"}
       </button>
 

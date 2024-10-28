@@ -1,3 +1,4 @@
+
 "use client";
 
 import React, { useEffect, useState } from "react";
@@ -7,10 +8,10 @@ import { faArrowLeft, faChevronDown } from "@fortawesome/free-solid-svg-icons";
 
 const EditAccount = () => {
   const router = useRouter();
-  const { UserId } = router.query; // รับ UserId จาก query parameters
   const [isGenderOpen, setIsGenderOpen] = useState(false);
   const [profileImageFile, setProfileImageFile] = useState(null); // เก็บไฟล์ภาพ
   const [profileImage, setProfileImage] = useState(null); // สำหรับแสดงภาพก่อนอัปโหลด
+  const [userId, setUserId] = useState(null); // เก็บ userId จาก session
   const [userData, setUserData] = useState({
     fullName: "",
     gender: "",
@@ -21,41 +22,45 @@ const EditAccount = () => {
   });
 
   const [isLoading, setIsLoading] = useState(true); // สถานะการโหลด
-  const [message, setMessage] = useState({ text: "", type: "" });
+  const [message, setMessage] = useState({ text: "", type: "" }); // โครงสร้าง message พร้อม text และ type
 
-  function getImageUrl(imageUrl) {
-    if (!imageUrl) return "default-profile.png"; // Fallback to default if imageUrl is null
+  useEffect(() => {
+    const fetchSessionData = async () => {
+      try {
+        const res = await fetch("/api/getSession");
+        const data = await res.json();
+        console.log(data);
+        
+        if (res.ok && data.userId) {
+          setUserId(data.userId);
+        } else {
+          setMessage({ text: data.message || "ไม่พบ session ผู้ใช้", type: "error" });
+          setIsLoading(false);
+        }
+      } catch (error) {
+        console.error("Error fetching session:", error);
+        setMessage({ text: "เกิดข้อผิดพลาดในการดึงข้อมูล session", type: "error" });
+        setIsLoading(false);
+      }
+    };
 
-    // If the imageUrl is a base64 data URL, return it directly
-    if (imageUrl.startsWith("data:")) {
-      return imageUrl;
-    }
-
-    // Attempt to extract the Google Drive file ID
-    const match = imageUrl.match(/d\/(.*?)(\/|$)/);
-    if (!match || match.length < 2) {
-      console.error("Invalid Google Drive link format:", imageUrl);
-      return "default-profile.png"; // Fallback to default if format is incorrect
-    }
-
-    const fileId = match[1];
-    return `https://images.weserv.nl/?url=drive.google.com/uc?id=${fileId}`;
-  }
+    fetchSessionData();
+  }, []);
 
   useEffect(() => {
     const fetchUserData = async () => {
-      if (UserId) {
+      if (userId) {
         try {
           const response = await fetch(`/api/user`, {
             method: "POST",
             headers: { "Content-Type": "application/json" },
-            body: JSON.stringify({ UserId }), // Assuming UserId is sufficient for fetching data
+            body: JSON.stringify({ userId: userId }),
           });
 
           if (response.ok) {
             const data = await response.json();
+            console.log(data[0].ProfileImage);
 
-            console.log(data[0].FullName);
             setUserData({
               fullName: data[0].FullName || "",
               gender: data[0].Gender || "",
@@ -67,22 +72,24 @@ const EditAccount = () => {
             setProfileImage(data[0].ProfileImage || "default-profile.png");
           } else {
             const errorData = await response.json();
-            setMessage(errorData.message || "ไม่สามารถดึงข้อมูลผู้ใช้ได้");
+            setMessage({ text: errorData.message || "ไม่สามารถดึงข้อมูลผู้ใช้", type: "error" });
           }
         } catch (err) {
           console.error("Error fetching user data:", err);
-          setMessage({ text: "An unexpected error occurred", type: "error" });
+          setMessage({ text: "เกิดข้อผิดพลาดที่ไม่คาดคิด", type: "error" });
         } finally {
-          setIsLoading(false); // Ensure loading state is set to false in both success and error cases
+          setIsLoading(false);
         }
       } else {
-        setMessage("UserId is missing in the URL");
+        setMessage({ text: "ไม่พบ UserId ใน session", type: "error" });
         setIsLoading(false);
       }
     };
 
-    fetchUserData();
-  }, [UserId]);
+    if (userId) {
+      fetchUserData();
+    }
+  }, [userId]);
 
   const handleInputChange = (e) => {
     const { id, value } = e.target;
@@ -93,53 +100,44 @@ const EditAccount = () => {
   };
 
   const handleNext = async () => {
-    // ตรวจสอบฟอร์ม
+    // Validate form
     if (!userData.fullName) {
-      setMessage({
-        text: "ข้อผิดพลาด: กรุณากรอกข้อมูลชื่อ-นามสกุล",
-        type: "error",
-      });
+      setMessage({ text: "กรุณากรอกข้อมูลชื่อ-นามสกุล", type: "error" });
       return;
     }
     if (!userData.gender) {
-      setMessage({ text: "ข้อผิดพลาด: กรุณากรอกข้อมูลเพศ", type: "error" });
+      setMessage({ text: "กรุณากรอกข้อมูลเพศ", type: "error" });
       return;
     }
     if (!userData.age) {
-      setMessage({ text: "ข้อผิดพลาด: กรุณากรอกข้อมูลอายุ", type: "error" });
+      setMessage({ text: "กรุณากรอกข้อมูลอายุ", type: "error" });
       return;
     }
     if (!userData.heightCM) {
-      setMessage({ text: "ข้อผิดพลาด: กรุณากรอกข้อมูลส่วนสูง", type: "error" });
+      setMessage({ text: "กรุณากรอกข้อมูลส่วนสูง", type: "error" });
       return;
     }
     if (!userData.shoeSizeEU) {
-      setMessage({
-        text: "ข้อผิดพลาด: กรุณากรอกข้อมูลขนาดเท้าในหน่วย EU",
-        type: "error",
-      });
+      setMessage({ text: "กรุณากรอกข้อมูลขนาดเท้า EU", type: "error" });
       return;
     }
     if (!userData.shoeSizeCM) {
-      setMessage({
-        text: "ข้อผิดพลาด: กรุณากรอกข้อมูลขนาดเท้าในหน่วย CM",
-        type: "error",
-      });
+      setMessage({ text: "กรุณากรอกข้อมูลขนาดเท้า CM", type: "error" });
       return;
     }
 
-    setIsLoading(true); // เริ่มการโหลด
-    setMessage(""); // ล้างข้อความข้อผิดพลาดก่อนหน้า
+    setIsLoading(true);
+    setMessage({ text: "" });
 
     try {
       let uploadedImageUrl = null;
 
-      // ถ้ามีไฟล์ภาพที่เลือก ให้ทำการอัปโหลด
       if (profileImageFile) {
         const uploadFormData = new FormData();
         uploadFormData.append("file", profileImageFile);
+        uploadFormData.append("UserId", userId);
 
-        const uploadRes = await fetch("/api/uploadToDrive", {
+        const uploadRes = await fetch("/api/uploadToFolder", {
           method: "POST",
           body: uploadFormData,
         });
@@ -147,33 +145,32 @@ const EditAccount = () => {
         const uploadData = await uploadRes.json();
 
         if (uploadRes.ok && uploadData.success) {
-          uploadedImageUrl = getImageUrl(uploadData.imageUrl);
-      } else {
+          uploadedImageUrl = uploadData.imageUrl;
+        } else {
           setMessage({ text: `เกิดข้อผิดพลาดในการอัปโหลดภาพ: ${uploadData.message}`, type: "error" });
-          setIsLoading(false); 
+          setIsLoading(false);
           return;
-      }
+        }
       }
 
-      // ส่งข้อมูลผู้ใช้ไปยัง API
       const res = await fetch("/api/updateUser", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
         },
         body: JSON.stringify({
-          UserId: UserId,
+          userId: userId,
           ...userData,
-          profileImage: uploadedImageUrl, // ส่ง URL ของรูปที่อัปโหลด
+          profileImage: uploadedImageUrl,
         }),
       });
 
       const data = await res.json();
 
       if (res.ok) {
-        // alert('อัปเดตบัญชีสำเร็จ! กำลังนำทางไปยังหน้า Homepage...');
+        setMessage({ text: "แก้ไขข้อมูลสำเร็จ", type: "success" });
         setTimeout(() => {
-          router.push(`/HomePage?UserId=${UserId}`);
+          router.push(`/HomePage`);
         }, 500);
       } else {
         setMessage({ text: `เกิดข้อผิดพลาด: ${data.message}`, type: "error" });
@@ -182,9 +179,7 @@ const EditAccount = () => {
       console.error("Error:", error);
       setMessage({ text: "เกิดข้อผิดพลาดในการส่งข้อมูล", type: "error" });
     } finally {
-      setTimeout(() => {
-        setIsLoading(false); // ยกเลิกสถานะ loading หลังจากส่งข้อมูลเสร็จ
-      }, 2000); // Show spinner for 2 second minimum
+      setIsLoading(false);
     }
   };
 
@@ -196,7 +191,7 @@ const EditAccount = () => {
     const file = e.target.files?.[0];
     if (file) {
       setProfileImageFile(file);
-      setProfileImage(URL.createObjectURL(file)); // สร้าง URL สำหรับแสดงภาพ
+      setProfileImage(URL.createObjectURL(file));
     }
   };
 
@@ -205,15 +200,19 @@ const EditAccount = () => {
       <FontAwesomeIcon
         icon={faArrowLeft}
         className="back-icon"
-        onClick={() => window.history.back()}
+        onClick={() => window.history.back()}a
       />
       <h1>ตั้งค่าบัญชี</h1>
-      {message && (
-            <p className={`alert ${message.type}`}>{message.text}</p>
-        )}
-     
-      {/* แก้ไขการแสดงผล message */}
-      <div className="profile-image-wrapper">
+
+      {message.text && (
+        <p className={`alert ${message.type}`}>
+          {message.text}
+        </p>
+      )}
+
+        
+       {/* แก้ไขการแสดงผล message */}
+       <div className="profile-image-wrapper">
         <input
           type="file"
           accept="image/*"
@@ -230,6 +229,7 @@ const EditAccount = () => {
           ></div>
         </label>
       </div>
+
       <div className="input-group">
         <label htmlFor="fullName">ชื่อ-นามสกุล</label>
         <input

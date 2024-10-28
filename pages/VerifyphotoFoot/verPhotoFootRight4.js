@@ -48,7 +48,7 @@ export default function About() {
         <Link href="/takePhotoFoot/takePhotoFootRight4">
           <button className={styles.retakeBtn}>ถ่ายใหม่อีกครั้ง</button>
         </Link>
-        <Link href="/footDataInformationSilde">
+        <Link href="/UserPage/UserInfo">
           <button className={styles.confirmBtn}>ยืนยัน</button>
         </Link>
       </footer>

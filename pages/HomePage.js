@@ -1,28 +1,75 @@
+
+// export default HomePage;
 "use client";
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faArrowLeft, faChevronDown, faTimes } from "@fortawesome/free-solid-svg-icons";
-import { faBell, faClock  } from "@fortawesome/free-regular-svg-icons";
+import { faBell, faClock } from "@fortawesome/free-regular-svg-icons";
 import { faChartBar, faUsers, faBoxOpen, faEnvelope } from "@fortawesome/free-solid-svg-icons";
-import "react-datepicker/dist/react-datepicker.css";
-import { VscHome, VscAccount, VscSearch, VscHistory } from "react-icons/vsc";
 import { PiScanFill } from "react-icons/pi";
+import { VscHome, VscAccount, VscSearch, VscHistory } from "react-icons/vsc";
 import { useRouter } from "next/router";
 
 const HomePage = () => {
   const router = useRouter();
   const [showNotification, setShowNotification] = useState(false);
+  const [profileImage, setProfileImage] = useState("/default-profile.png"); // เริ่มต้นด้วยภาพ default
+  const [userId, setUserId] = useState(null);
+
+  // ดึงข้อมูล session และ user profile
+  useEffect(() => {
+    const fetchSessionData = async () => {
+      try {
+        const sessionRes = await fetch("/api/getSession");
+        const sessionData = await sessionRes.json();
+
+        if (sessionRes.ok && sessionData.userId) {
+          setUserId(sessionData.userId);
+          fetchUserData(sessionData.userId); // ดึงข้อมูล user profile ตาม userId
+        }
+      } catch (error) {
+        console.error("Error fetching session:", error);
+      }
+    };
+
+    const fetchUserData = async (userId) => {
+      try {
+        const response = await fetch(`/api/user`, {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ userId: userId }),
+        });
+
+        if (response.ok) {
+          const data = await response.json();
+          setProfileImage(data[0].ProfileImage || "/default-profile.png");
+        }
+      } catch (error) {
+        console.error("Error fetching user data:", error);
+      }
+    };
+
+    fetchSessionData();
+  }, []);
 
   const goToEditAccount = () => {
-    router.push("/EditAccount");
+    router.push("/EditAcc");
   };
 
-  const goToUserHistory= () => {
-    router.push("/UserHistory");
+  const goToHistoryPage = () => {
+    router.push("/UserPage/UserHistory");
   };
 
-  const goToHomePage= () => {
+  const goToHomePage = () => {
     router.push("/HomePage");
+  };
+
+  const goTosearch = () => {
+    router.push("/search");
+  };
+
+  const goTotakePhotoFoot = () => {
+    router.push("/takePhotoFoot/takePhotoFootLeft1");
   };
 
   const toggleNotification = () => {
@@ -65,8 +112,9 @@ const HomePage = () => {
                 <p className="notification-time">ตอนนี้</p>
               </div>
             )}
+
             <img
-              src="/path/to/profile-picture.jpg"
+              src={profileImage}
               alt="Profile"
               className="profile-pic"
             />
@@ -78,19 +126,19 @@ const HomePage = () => {
       {/* Content Menu */}
       <div className="content-menu">
         <div className="content-item">
-        <FontAwesomeIcon icon={faChartBar} className="content-icon" />
+          <FontAwesomeIcon icon={faChartBar} className="content-icon" />
           <span>สถิติ</span>
         </div>
         <div className="content-item">
-        <FontAwesomeIcon icon={faUsers} className="content-icon" />
+          <FontAwesomeIcon icon={faUsers} className="content-icon" />
           <span>ผู้ใช้งาน</span>
         </div>
         <div className="content-item">
-        <FontAwesomeIcon icon={faBoxOpen} className="content-icon" />
+          <FontAwesomeIcon icon={faBoxOpen} className="content-icon" />
           <span>สินค้า</span>
         </div>
         <div className="content-item">
-        <FontAwesomeIcon icon={faEnvelope} className="content-icon" />
+          <FontAwesomeIcon icon={faEnvelope} className="content-icon" />
           <span>จดหมาย</span>
         </div>
       </div>
@@ -101,15 +149,15 @@ const HomePage = () => {
           <VscHome />
           <p>หน้าหลัก</p>
         </div>
-        <div className="menuItem" onClick={() => router.push("/search")}>
+        <div className="menuItem" onClick={goTosearch}>
           <VscSearch />
           <p>ค้นหา</p>
         </div>
-        <div className="menuItem" onClick={() => router.push("/takePhotoFoot/takePhotoFootLeft1")}>
-          <PiScanFill />
+        <div className="menuItem" onClick={goTotakePhotoFoot}>
+        <PiScanFill />
           <p>สแกน</p>
         </div>
-        <div className="menuItem" onClick={goToUserHistory}>
+        <div className="menuItem" onClick={goToHistoryPage}>
           <VscHistory />
           <p>ประวัติ</p>
         </div>

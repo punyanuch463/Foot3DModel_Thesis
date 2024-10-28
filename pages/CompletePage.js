@@ -1,55 +1,93 @@
 "use client";
 
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect } from 'react';
 import { useRouter } from "next/router";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faArrowLeft, faCheck } from "@fortawesome/free-solid-svg-icons";
 
 const CompletePage = () => {
-  const [verificationCode, setVerificationCode] = useState("");
-  const [message, setMessage] = useState({ text: "", type: "" }); // เปลี่ยนให้เป็นอ็อบเจ็กต์
-  const [isLoading, setIsLoading] = useState(false); // สถานะการโหลด
+  const [verificationCode, setVerificationCode] = useState('');
+  const [errorMessage, setErrorMessage] = useState('');
+  const [message, setMessage] = useState({ text: "", type: "" }); // Structured message format
+  const [isLoading, setIsLoading] = useState(false);
+  const [UserId, setUserId] = useState(null);
   const router = useRouter();
-  const { UserId } = router.query;
 
   useEffect(() => {
-    if (!UserId) {
-      setMessage({ text: "ไม่พบ UserId.", type: "error" });
+    const fetchSession = async () => {
+      try {
+        const response = await fetch('/api/getSession');
+        const data = await response.json();
+
+        if (response.ok) {
+          setUserId(data.userId);
+        } else {
+          setErrorMessage('ไม่พบข้อมูลผู้ใช้งาน กรุณาล็อกอินใหม่');
+        }
+      } catch (error) {
+        console.error('Error fetching session:', error);
+        setErrorMessage('ไม่สามารถดึงข้อมูลเซสชันได้');
+      }
+    };
+
+    fetchSession();
+  }, []);
+
+  useEffect(() => {
+    if (router.query.UserId) {
+      setUserId(router.query.UserId);
     }
-  }, [UserId]);
+  }, [router.query.UserId]);
 
   const handleNext = async () => {
     if (!UserId) {
-      setMessage({ text: "ไม่พบ UserId.", type: "error" });
+      setMessage({ text: 'ไม่พบ UserId.', type: 'error' });
       return;
     }
 
     const userIdNumber = parseInt(UserId, 10);
-    setIsLoading(true); // เริ่มการโหลด
-    setMessage({ text: "", type: "" }); // ล้างข้อความข้อผิดพลาดก่อนหน้า
+
+    setIsLoading(true);
+    setMessage({ text: '' });
 
     try {
-      const response = await fetch("/api/verifyCode", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
+      const response = await fetch('/api/verifyCode', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ UserId: userIdNumber, code: verificationCode }),
       });
 
       const data = await response.json();
 
       if (response.ok) {
-        setMessage({ text: "ยืนยันสำเร็จ", type: "success" }); // เพิ่มข้อความสำเร็จ
-        setTimeout(() => {
-          router.push("/LoginPage");
-        }, 500);
+        const sessionRes = await fetch('/api/getSession');
+        const sessionData = await sessionRes.json();
+        
+        if (sessionRes.ok) {
+          console.log('Session Data:', sessionData);
+          
+          await fetch('/api/session', {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({ userId: sessionData.userId }),
+          });
+
+          setTimeout(() => {
+            router.push(`/LoginPage`);
+          }, 500);
+        } else {
+          setMessage({ text: 'ไม่พบข้อมูลเซสชัน กรุณาล็อกอินใหม่', type: 'error' });
+        }
       } else {
-        setMessage({ text: `ข้อผิดพลาด: ${data.error || data.message}`, type: "error" });
+        setMessage({ text: `เกิดข้อผิดพลาด: ${data.error || data.message}`, type: 'error' });
       }
     } catch (error) {
-      console.error("Error:", error);
-      setMessage({ text: "เกิดข้อผิดพลาดในการส่งข้อมูล", type: "error" });
+      console.error('Error:', error);
+      setMessage({ text: 'เกิดข้อผิดพลาดในการส่งข้อมูล', type: 'error' });
     } finally {
-      setIsLoading(false); // ยกเลิกสถานะ loading
+      setIsLoading(false);
     }
   };
 
@@ -72,10 +110,11 @@ const CompletePage = () => {
       <h1>ยืนยัน</h1>
 
       {message.text && (
-        <p className={`alert alert-${message.type}`}>
+        <p className={`alert ${message.type}`}>
           {message.text}
         </p>
       )}
+      {errorMessage && <p className="alert error">{errorMessage}</p>}
 
       <div className="center-circle-container">
         <div className="center-circle">
@@ -95,6 +134,7 @@ const CompletePage = () => {
             id="verificationCode"
             value={verificationCode}
             onChange={(e) => setVerificationCode(e.target.value)}
+            placeholder="กรอกรหัสยืนยัน"
             required
           />
         </div>
@@ -104,7 +144,7 @@ const CompletePage = () => {
         type="button"
         className="primary-btn"
         onClick={handleNext}
-        disabled={isLoading} // ปิดการใช้งานปุ่มเมื่อกำลังโหลด
+        disabled={isLoading}
       >
         {isLoading ? "กำลังดำเนินการ..." : "ต่อไป"}
       </button>

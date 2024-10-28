@@ -82,8 +82,6 @@ export default async function handler(req, res) {
         console.error('Error sending verification email:', error.message);
         return res.status(500).json({ error: 'ส่งอีเมลไม่ได้.' });
       }
-    } else {
-      return res.status(400).json({ error: 'ต้องการ userid หรือ verify code' });
     }
   } else {
     res.setHeader('Allow', ['POST']);
