@@ -955,27 +955,43 @@ select.open {
   margin-bottom: 20px; /* เพิ่มระยะห่างด้านล่างของปุ่ม */
 }
 
+/* ปุ่มซ้าย - เริ่มต้นด้วยพื้นหลังสีน้ำเงิน */
 .leftButton {
   font-family: "Sukhumvit Set", sans-serif;
-  background: transparent;
-  border: 2px solid #102c57; /* เปลี่ยนสี border ตามที่ต้องการ */
-  border-radius: 20px 0 0 20px; /* ทำให้ปุ่มโค้งมนแค่บนและล่างซ้าย */
+  background: transparent; /* พื้นหลังสีน้ำเงิน */
+  border: 2px solid #102c57;
+  border-radius: 20px 0 0 20px;
   padding: 10px;
-  padding-left: 50px; /* ปรับขนาดปุ่ม */
-  font-size: 16px; /* ขนาดตัวอักษร */
-  color: #102c57; /* สีข้อความ */
+  padding-left: 50px;
+  font-size: 16px;
+  color:  #102c57; /* สีข้อความขาว */
 }
 
+/* ปุ่มขวา - เริ่มต้นด้วยพื้นหลังโปร่งใส */
 .rightButton {
   font-family: "Sukhumvit Set", sans-serif;
-  background: #102c57;
-  border: 2px solid #102c57; /* เปลี่ยนสี border ตามที่ต้องการ */
-  border-radius: 0 20px 20px 0; /* ทำให้ปุ่มโค้งมนแค่บนและล่างขวา */
+  background: transparent;
+  border: 2px solid #102c57;
+  border-radius: 0 20px 20px 0;
   padding: 10px;
-  padding-right: 50px; /* ปรับขนาดปุ่ม */
-  font-size: 16px; /* ขนาดตัวอักษร */
-  color: #fefaf6; /* สีข้อความ */
+  padding-right: 50px;
+  font-size: 16px;
+  color: #102c57; /* สีข้อความสีน้ำเงิน */
 }
+
+/* เมื่อคลิกปุ่มซ้าย - Active State */
+.activeLeft {
+  background: #102c57;
+  color: #fefaf6;
+}
+
+/* เมื่อคลิกปุ่มขวา - Active State */
+.activeRight {
+  background: #102c57; /* เปลี่ยนเป็นสีน้ำเงินเมื่อคลิก */
+  color: #fefaf6;
+}
+
+
 
 .title {
   font-size: 24px;

@@ -8,14 +8,27 @@ import { faArrowLeft } from "@fortawesome/free-solid-svg-icons";
 export default function About() {
   const [capturedImage, setCapturedImage] = useState(null);
   const [frameImage, setFrameImage] = useState(null);
-  const router = useRouter(); // ย้ายการเรียกใช้ router ไว้นอก useEffect
+  const [userId, setUserId] = useState(null);
+  const router = useRouter();
 
   useEffect(() => {
-    // Retrieve image data and frame data from local storage
+    const fetchSessionData = async () => {
+      try {
+        const sessionRes = await fetch("/api/getSession");
+        const sessionData = await sessionRes.json();
+        if (sessionRes.ok && sessionData.userId) {
+          setUserId(sessionData.userId);
+        }
+      } catch (error) {
+        console.error("Error fetching session:", error);
+      }
+    };
+    fetchSessionData();
+  }, []);
+
+  useEffect(() => {
     const image = localStorage.getItem("capturedImage");
     const frame = localStorage.getItem("frameImage");
-    
-    // ตรวจสอบค่าที่ดึงมาว่ามีจริงหรือไม่
     if (image) setCapturedImage(image);
     if (frame) setFrameImage(frame);
   }, []);
@@ -24,27 +37,62 @@ export default function About() {
     router.push("/HomePage");
   };
 
+  const saveImageToDatabase = async () => {
+    if (capturedImage && userId) {
+      try {
+        const fileName = "imagefootleft1.png"; // Set desired file name
+
+        // Step 1: Save the image to the file system via API
+        const imageSaveResponse = await fetch("/api/saveImageToFile", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            base64Image: capturedImage,
+            userId,
+            fileName,
+          }),
+        });
+        const { pathUrl } = await imageSaveResponse.json();
+
+        if (pathUrl) {
+          // Step 2: Save the path to the database
+          const dbSaveResponse = await fetch("/api/saveFootImage", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({
+              imageCategoryId: 1,
+              side: "left",
+              pathUrl,
+            }),
+          });
+
+          const dbSaveData = await dbSaveResponse.json();
+          if (dbSaveData.id) {
+            console.log("Image saved successfully with ID:", dbSaveData.id);
+            router.push('/takePhotoFoot/takePhotoFootLeft2');
+          } else {
+            console.error("Failed to save image to database:", dbSaveData);
+          }
+        }
+      } catch (error) {
+        console.error("Error saving image:", error);
+      }
+    }
+  };
+
   return (
     <main className={styles.main}>
-      <FontAwesomeIcon
-        icon={faArrowLeft}
-        className={styles.backIcon}
-        onClick={handleBack}
-      />
+      <FontAwesomeIcon icon={faArrowLeft} className={styles.backIcon} onClick={handleBack} />
       <p className={styles.footTextTitle}>ฝ่าเท้าข้างซ้าย</p>
       {capturedImage && frameImage ? (
         <div className={styles.imageContainer}>
           <div className={styles.frameContainer}>
             <img src={frameImage} alt="Frame" className={styles.frameLine} />
-            <img
-              src={capturedImage}
-              alt="Captured"
-              className={styles.capturedImage}
-            />
+            <img src={capturedImage} alt="Captured" className={styles.capturedImage} />
           </div>
         </div>
       ) : (
-        <p>ยังไม่มีรูปภาพ</p> // แสดงข้อความเมื่อไม่มีภาพ
+        <p>ยังไม่มีรูปภาพ</p>
       )}
       <p className={styles.footTextSubTitle}>รูปภาพของคุณสามารถใช้งานได้</p>
 
@@ -52,121 +100,10 @@ export default function About() {
         <Link href="/takePhotoFoot/takePhotoFootLeft1">
           <button className={styles.retakeBtn}>ถ่ายใหม่อีกครั้ง</button>
         </Link>
-
-        <Link href="/takePhotoFoot/takePhotoFootLeft2">
-          <button className={styles.confirmBtn}>ยืนยัน</button>
-        </Link>
+        <button className={styles.confirmBtn} onClick={saveImageToDatabase}>
+          ยืนยัน
+        </button>
       </footer>
     </main>
   );
 }
-
-
-// import React, { useEffect, useState } from "react";
-// import styles from './verphoto.module.css';
-// import Link from "next/link";
-
-// export default function About() {
-//   const [capturedImage, setCapturedImage] = useState(null);
-//   const [frameImage, setFrameImage] = useState(null);
-//   const [isLoading, setIsLoading] = useState(false); // Loading state
-//   const [message, setMessage] = useState(null); // Feedback message
-
-//   useEffect(() => {
-//     // Retrieve image data and frame data from local storage
-//     const image = localStorage.getItem('capturedImage');
-//     const frame = localStorage.getItem('frameImage');
-//     setCapturedImage(image);
-//     setFrameImage(frame);
-//   }, []);
-
-//   const handleConfirm = async () => {
-//     if (!capturedImage) {
-//       setMessage("No image to upload.");
-//       return;
-//     }
-
-//     setIsLoading(true);
-//     setMessage(null);
-
-//     try {
-//       // Convert data URL to Blob
-//       const response = await fetch(capturedImage);
-//       const blob = await response.blob();
-
-//       // Create a File from the Blob
-//       const file = new File([blob], 'captured_image.png', { type: blob.type });
-
-//       // Prepare form data
-//       const formData = new FormData();
-//       formData.append('file', file);
-//       formData.append('folderId', process.env.NEXT_PUBLIC_SHARED_DRIVE_ID_FootImage); // Or specify the folder ID
-
-//       // Send POST request to the API route
-//       const uploadResponse = await fetch('/api/uploadToDrive', { // Ensure the API route path is correct
-//         method: 'POST',
-//         body: formData,
-//       });
-
-//       const result = await uploadResponse.json();
-
-//       if (uploadResponse.ok) {
-//         setMessage(`Upload successful! View it here: ${result.imageUrl}`);
-//         // Optionally, navigate to another page
-//       } else {
-//         setMessage(`Upload failed: ${result.message}`);
-//       }
-//     } catch (error) {
-//       console.error('Error uploading the image:', error);
-//       setMessage("An error occurred during upload.");
-//     } finally {
-//       setIsLoading(false);
-//     }
-//   };
-
-//   return (
-//     <main className={styles.main}>
-
-//       <Link href="/HomePage">
-//         <button className={styles.backButton}>
-//           <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24"
-//                viewBox="0 0 24 24" fill="none" stroke="#000" strokeWidth="2"
-//                strokeLinecap="round" strokeLinejoin="round" className="feather feather-arrow-left">
-//             <line x1="19" y1="12" x2="5" y2="12"></line>
-//             <polyline points="12 19 5 12 12 5"></polyline>
-//           </svg>
-//         </button>
-//       </Link>
-
-//       <p className={styles.title}>ฝ่าเท้าข้างซ้าย</p>
-
-//       {capturedImage && frameImage && (
-//         <div className={styles.imageContainer}>
-//           <div className={styles.frameContainer}>
-//             <img src={frameImage} alt="Frame" className={styles.frameImage} />
-//             <img src={capturedImage} alt="Captured" className={styles.capturedImage} />
-//           </div>
-//         </div>
-//       )}
-
-//       <p className={styles.verityfoot}>รูปภาพของคุณสามารถใช้งานได้</p>
-
-//       {message && <p className={styles.message}>{message}</p>}
-//       {isLoading && <p className={styles.loading}>Uploading...</p>}
-
-//       <footer className={styles.footer}>
-//         <Link href="/takePhotoFoot/takePhotoFootLeft1">
-//           <button className={styles.retake}>ถ่ายใหม่อีกครั้ง</button>
-//         </Link>
-
-//         <button
-//           className={styles.confirm}
-//           onClick={handleConfirm}
-//           disabled={isLoading}
-//         >
-//           {isLoading ? "Uploading..." : "ยืนยัน"}
-//         </button>
-//       </footer>
-//     </main>
-//   );
-// }
