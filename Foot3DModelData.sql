@@ -2,7 +2,9 @@ CREATE DATABASE foot3dmodel;
 USE foot3dmodel;
 
 -- create Table 
-
+DELETE FROM User;
+DROP TABLE EmailVerification;
+DROP TABLE User;
 -- User
 CREATE TABLE User (
     UserId INT AUTO_INCREMENT PRIMARY KEY,  -- กำหนด Primary Key และให้เพิ่มค่าอัตโนมัติ
@@ -15,7 +17,21 @@ CREATE TABLE User (
     Age INT,                                -- อายุ (จำนวนเต็ม)
     FootSizeCM DECIMAL(5,2),                -- ขนาดเท้า (ซม.) (จำนวนทศนิยม 2 ตำแหน่ง)
     HeightCM DECIMAL(5,2),                  -- ส่วนสูง (ซม.) (จำนวนทศนิยม 2 ตำแหน่ง)
-    FootSizeEU INT                          -- ขนาดเท้า (EU) (จำนวนเต็ม)
+    FootSizeEU INT ,                         -- ขนาดเท้า (EU) (จำนวนเต็ม)
+      ProfileImage text -- ใช้ TEXT ซึ่งเป็นขนาดสูงสุดของ URL ในเบราว์เซอร์บางตัว
+    -- เพิ่มคอลัมน์อื่นๆ ตามที่ต้องการ
+);
+
+
+CREATE TABLE EmailVerification (
+    VerificationID INT AUTO_INCREMENT PRIMARY KEY,     -- Primary Key ที่เพิ่มค่าอัตโนมัติ
+    UserId INT,                                        -- Foreign Key เชื่อมกับตาราง User
+    VerificationCode VARCHAR(255) NOT NULL,            -- รหัสยืนยันแบบสุ่ม
+    ExpirationDate DATETIME NOT NULL,                  -- วันหมดอายุของรหัสยืนยัน
+    Verified BOOLEAN DEFAULT FALSE,                    -- สถานะการยืนยัน (true = ยืนยันแล้ว, false = ยังไม่ยืนยัน)
+    
+    -- เชื่อม Foreign Key กับตาราง User
+    CONSTRAINT FK_UserID FOREIGN KEY (UserId) REFERENCES `User`(UserId) ON DELETE CASCADE
 );
 
 -- Admin
@@ -31,16 +47,7 @@ CREATE TABLE Admin (
     Height DECIMAL(5,2)                        -- ส่วนสูง (ทศนิยม 2 ตำแหน่ง)
 );
 
-CREATE TABLE EmailVerification (
-    VerificationID INT AUTO_INCREMENT PRIMARY KEY,     -- Primary Key ที่เพิ่มค่าอัตโนมัติ
-    UserId INT,                                        -- Foreign Key เชื่อมกับตาราง User
-    VerificationCode VARCHAR(255) NOT NULL,            -- รหัสยืนยันแบบสุ่ม
-    ExpirationDate DATETIME NOT NULL,                  -- วันหมดอายุของรหัสยืนยัน
-    Verified BOOLEAN DEFAULT FALSE,                    -- สถานะการยืนยัน (true = ยืนยันแล้ว, false = ยังไม่ยืนยัน)
-    
-    -- เชื่อม Foreign Key กับตาราง User
-    CONSTRAINT FK_UserID FOREIGN KEY (UserId) REFERENCES `User`(UserId) ON DELETE CASCADE
-);
+
 
 -- Order
 CREATE TABLE `Order` (
@@ -110,7 +117,7 @@ CREATE TABLE FootImage (
     FootImageID INT AUTO_INCREMENT PRIMARY KEY,    -- Primary Key ที่เพิ่มค่าอัตโนมัติ
     ImageCategoryID INT,                          -- Foreign Key เชื่อมกับตาราง ImageCategory
     Side VARCHAR(20)  NOT NULL,           -- ฝั่งเท้า (ซ้าย/ขวา)
-    Path VARCHAR(255) NOT NULL,                   -- ที่อยู่ของภาพถ่าย (Path)
+    PathUrl Text ,                   -- ที่อยู่ของภาพถ่าย (Path)
     
     -- เชื่อม Foreign Key กับตาราง ImageCategory
     CONSTRAINT FK_ImageCategoryID FOREIGN KEY (ImageCategoryID) REFERENCES `ImageCategory`(ImageCategoryID) ON DELETE CASCADE
@@ -124,15 +131,22 @@ CREATE TABLE ImageCategory (
 
 
 -- insert data
+USE foot3dmodel;
 
+ALTER TABLE User MODIFY ProfileImage TEXT;
+DESCRIBE User;
 select * from  EmailVerification ;
 select * from User ;
-DELETE FROM User WHERE UserName='punyanuch';
+select * from ImageCategory ;
+select * from FootImage ;
+drop table FootImage;
+
+DELETE FROM User WHERE UserId=5;
 DELETE FROM User;
-DROP TABLE User;
 DROP TABLE EmailVerification;
+DROP TABLE User;
 
-
+    
 INSERT INTO User (UserName, UserPassWord, UserEmail, PhoneNumber, FullName, Gender, Age, FootSizeCM, HeightCM, FootSizeEU) 
 VALUES 
 ('Kornnaphat', 'Kornnaphat123', 'Kornnaphat.Seth@gmail.com', '0987654321', 'กรณ์นภัส เศรษฐรัตนพงศ์', 'Female', 21, 24, 165, 38),

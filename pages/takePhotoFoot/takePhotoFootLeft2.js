@@ -60,7 +60,7 @@ export default function Homepage() {
     setIsFootInFrame(false);
   };
   const handleBack = () => {
-    router.push("/HomePage");
+    router.push("/HomePageUser");
   };
 
   return (

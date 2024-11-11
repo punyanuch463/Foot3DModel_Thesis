@@ -80,7 +80,7 @@ const FootSizeForm = () => {
   const handleConfirm = () => {
     console.log("Foot measurements:", footMeasurements);
     setShowPopup(false);
-    router.push("/UserPage/UserFoot");
+    router.push("/HomePageUser");
   };
 
   const handleCancel = () => {

@@ -24,7 +24,7 @@ const SettingAccount = () => {
   });
 
   const [message, setMessage] = useState({ text: "", type: "" });
-  const [isLoading, setIsLoading] = useState(false); // เพิ่ม state สำหรับการโหลด
+  // const [isLoading, setIsLoading] = useState(false); // เพิ่ม state สำหรับการโหลด
 
 
   useEffect(() => {
@@ -98,7 +98,7 @@ const SettingAccount = () => {
       return;
     }
     
-    setIsLoading(true); // เริ่มการโหลด
+    // setIsLoading(true); // เริ่มการโหลด
     setMessage(''); // ล้างข้อความข้อผิดพลาดก่อนหน้า
 
     try {
@@ -171,7 +171,7 @@ const SettingAccount = () => {
       console.error('Error:', error);
       setMessage('เกิดข้อผิดพลาดในการส่งข้อมูล');
     } finally {
-      setIsLoading(false);
+      // setIsLoading(false);
     }
   };
 
@@ -343,16 +343,17 @@ const SettingAccount = () => {
         </label>
       </div>
 
-      <button type="button" className="primary-btn" onClick={handleNext} disabled={isLoading} 
+      <button type="button" className="primary-btn" onClick={handleNext} 
+      // disabled={isLoading} 
       >
-        {isLoading ? "กำลังดำเนินการ..." : "ต่อไป"} {/* แสดงข้อความตามสถานะการโหลด */}
+       ต่อไป
       </button>
 
-     {isLoading && (
+     {/* {isLoading && (
         <div className="loading-overlay">
           <div className="spinner"></div>
         </div>
-      )}
+      )} */}
     </div>
   );
 };

@@ -10,7 +10,7 @@ import {
 } from "@fortawesome/free-solid-svg-icons";
 
 const CreateAccount = () => {
-  const [isLoading, setIsLoading] = useState(false);
+  // const [isLoading, setIsLoading] = useState(false);
   const [passwordVisible, setPasswordVisible] = useState(false);
   const [formData, setFormData] = useState({
     UserName: '',
@@ -36,7 +36,7 @@ const CreateAccount = () => {
   const handleCreateAccount = async (e) => {
     e.preventDefault();
 
-    setIsLoading(true);
+    // setIsLoading(true);
     setMessage(null);
 
     try {
@@ -69,7 +69,8 @@ const CreateAccount = () => {
       console.error('Error:', error);
       setMessage({ text: 'ข้อผิดพลาดในการส่งข้อมูล', type: "error" });
     } finally {
-      setIsLoading(false);
+      // setIsLoading(false);
+
     }
   };
 
@@ -178,18 +179,14 @@ const CreateAccount = () => {
           onClick={handleMsg} 
           type="submit" 
           className="primary-btn" 
-          disabled={isLoading}
+          // disabled={isLoading}
         >
-          {isLoading ? "กำลังดำเนินการ..." : "สร้างบัญชี"}
+            ต่อไป
         </button>
 
-        {isLoading && (
-          <div className="loading-overlay">
-            <div className="spinner"></div>
-          </div>
-        )}
       </form>
     </div>
+    
   );
 };
 

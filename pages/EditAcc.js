@@ -170,7 +170,7 @@ const EditAccount = () => {
       if (res.ok) {
         setMessage({ text: "แก้ไขข้อมูลสำเร็จ", type: "success" });
         setTimeout(() => {
-          router.push(`/HomePage`);
+          router.push(`/HomePageUser`);
         }, 500);
       } else {
         setMessage({ text: `เกิดข้อผิดพลาด: ${data.message}`, type: "error" });

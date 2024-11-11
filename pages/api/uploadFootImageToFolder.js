@@ -1,63 +1,35 @@
-import { promises as fs } from 'fs';
-import formidable from 'formidable';
+import fs from 'fs';
 import path from 'path';
 
-// Prevent automatic body parsing
-export const config = {
-  api: {
-    bodyParser: false,
-  },
-};
-
-const uploadDir = path.resolve(process.cwd(), 'public/uploads'); // เปลี่ยนไปที่ public/uploads
-
-
 export default async function handler(req, res) {
-  if (req.method !== 'POST') {
-    return res.status(405).json({ message: 'Method not allowed' });
-  }
+  if (req.method === 'POST') {
+    const { base64Image, userId, fileName } = req.body;
 
-  const form = formidable({ keepExtensions: true, uploadDir });
-
-  // Ensure the upload directory exists
-  await fs.mkdir(uploadDir, { recursive: true });
-
-  form.parse(req, async (err, fields, files) => {
-    if (err) {
-      console.error('Error parsing form:', err);
-      return res.status(500).json({ message: 'Error parsing form' });
+    if (!base64Image || !userId || !fileName) {
+      return res.status(400).json({ success: false, message: 'ข้อมูลไม่ครบถ้วน' });
     }
 
-    console.log('Parsed files:', files); // Log the files object
-
-    const { UserId } = fields; 
-    if (!UserId) {
-      return res.status(400).json({ message: 'User ID is required' });
-    }
-
-    const userUploadDir = path.join(uploadDir, UserId.toString()); // Ensure UserId is a string
-
-    // Ensure the user upload directory exists
-    await fs.mkdir(userUploadDir, { recursive: true });
-
-    const file = files.file[0]; // Access the first file in the array
-    if (!file || typeof file.newFilename !== 'string') {
-      return res.status(400).json({ message: 'File upload failed or filename is missing' });
-    }
-
-    const filePath = path.join(userUploadDir, file.newFilename);
-    
     try {
-      // Move the uploaded file to the desired location
-      await fs.rename(file.filepath, filePath);
-    } catch (moveError) {
-      console.error('Error moving file:', moveError);
-      return res.status(500).json({ message: 'Error saving file' });
-    }
+      // แปลง Base64 เป็น buffer
+      const imageBuffer = Buffer.from(base64Image.split(',')[1], 'base64');
 
-    return res.status(200).json({
-      success: true,
-      imageUrl: `/uploads/${UserId}/${file.newFilename}`,
-    });
-  });
+      // กำหนดเส้นทางของโฟลเดอร์เก็บไฟล์
+      const folderPath = path.join(process.cwd(), 'public', 'uploads', 'foot_images', userId);
+      if (!fs.existsSync(folderPath)) fs.mkdirSync(folderPath, { recursive: true });
+
+      // กำหนดเส้นทางของไฟล์และบันทึกลงไฟล์
+      const filePath = path.join(folderPath, fileName);
+      fs.writeFileSync(filePath, imageBuffer);
+
+      // ส่งลิงก์สำหรับการเข้าถึงไฟล์ที่เก็บ
+      const imageUrl = `/uploads/foot_images/${userId}/${fileName}`;
+      res.status(200).json({ success: true, imageUrl });
+    } catch (error) {
+      console.error('Error saving image:', error);
+      res.status(500).json({ success: false, message: 'เกิดข้อผิดพลาดในการจัดเก็บรูปภาพ' });
+    }
+  } else {
+    res.setHeader('Allow', ['POST']);
+    res.status(405).end(`Method ${req.method} Not Allowed`);
+  }
 }

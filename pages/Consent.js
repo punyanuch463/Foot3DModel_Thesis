@@ -11,7 +11,7 @@ const PDPAConsentPage = () => {
   const [isChecked, setIsChecked] = useState(false);
   const [UserId, setUserId] = useState(null);
   const [message, setMessage] = useState({ text: "", type: "" }); // Structured message format
-  const [isLoading, setIsLoading] = useState(false);
+  // const [isLoading, setIsLoading] = useState(false);
 
   useEffect(() => {
     const checkSession = async () => {
@@ -49,7 +49,7 @@ const PDPAConsentPage = () => {
       return;
     }
 
-    setIsLoading(true);
+    // setIsLoading(true);
     
     try {
       const sessionRes = await fetch('/api/getSession');
@@ -74,7 +74,7 @@ const PDPAConsentPage = () => {
       console.error('Error:', error);
       setMessage({ text: 'เกิดข้อผิดพลาดในการสร้างเซสชัน', type: 'error' });
     } finally {
-      setIsLoading(false);
+      // setIsLoading(false);
     }
   };
 
@@ -123,15 +123,13 @@ const PDPAConsentPage = () => {
         </label>
       </div>
 
-      <button type="button" className="primary-btn" onClick={handleNext} disabled={isLoading}>
-        {isLoading ? "กำลังดำเนินการ..." : "ต่อไป"}
+      <button type="button" className="primary-btn" onClick={handleNext} 
+      // disabled={isLoading}
+      >
+       ต่อไป
       </button>
 
-      {isLoading && (
-        <div className="loading-overlay">
-          <div className="spinner"></div>
-        </div>
-      )}
+
     </div>
   );
 };

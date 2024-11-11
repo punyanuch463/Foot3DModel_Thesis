@@ -70,7 +70,7 @@ export default function Homepage() {
   };
 
   const handleBack = () => {
-    router.push("/HomePage");
+    router.push("/HomePageUser");
   };
 
   return (

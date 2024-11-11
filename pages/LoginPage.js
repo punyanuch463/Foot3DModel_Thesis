@@ -15,7 +15,7 @@ const Login = () => {
   });
   
   const [message, setMessage] = useState({ text: "", type: "" }); // Message structure with text and type
-  const [isLoading, setIsLoading] = useState(false); // Loading state
+  // const [isLoading, setIsLoading] = useState(false); // Loading state
 
   // Function to toggle password visibility
   const togglePasswordVisibility = () => {
@@ -42,7 +42,7 @@ const Login = () => {
       return;
     }
 
-    setIsLoading(true);
+    // setIsLoading(true);
   
     try {
       const loginRes = await fetch('/api/login', {
@@ -69,7 +69,7 @@ const Login = () => {
         if (sessionRes.ok) {
           setMessage({ text: "เข้าสู่ระบบสำเร็จ", type: "success" });
           setTimeout(() => {
-            router.push('/HomePage');
+            router.push('/HomePageUser');
           }, 500);
         } else {
           setMessage({ text: `ข้อผิดพลาด: ${sessionData.message}`, type: 'error' });
@@ -81,7 +81,7 @@ const Login = () => {
       console.error('Error:', error);
       setMessage({ text: 'ข้อผิดพลาดในการส่งข้อมูล', type: 'error' });
     } finally {
-      setIsLoading(false);
+      // setIsLoading(false);
     }
   };
   
@@ -139,17 +139,18 @@ const Login = () => {
         type="button"
         className="primary-btn"
         onClick={handleNext}
-        disabled={isLoading} 
+        // disabled={isLoading} 
       >
-        {isLoading ? "กำลังดำเนินการ..." : "เข้าสู่ระบบ"}
+        เข้าสู่ระบบ
+        {/* {isLoading ? "กำลังดำเนินการ..." : "เข้าสู่ระบบ"} */}
       </button>
       </form>
 
-      {isLoading && (
+      {/* {isLoading && (
         <div className="loading-overlay">
           <div className="spinner"></div>
         </div>
-      )}
+      )} */}
     </div>
     
   );

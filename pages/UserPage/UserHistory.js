@@ -76,7 +76,7 @@ const UserHistory = () => {
   };
 
   const goToHomePage = () => {
-    router.push("/HomePage");
+    router.push("/HomePageUser");
   };
 
   const goTosearch = () => {
@@ -85,6 +85,10 @@ const UserHistory = () => {
 
   const goTotakePhotoFoot = () => {
     router.push("/takePhotoFoot/takePhotoFootLeft1");
+  };
+
+  const goToFoot3d = () => {
+    router.push("/UserPage/UserFoot");
   };
 
   const toggleExpandOrder = (index) => {
@@ -297,7 +301,7 @@ const UserHistory = () => {
               >
                 รายละเอียด
               </button>
-              <button className="view3DBtn">ภาพ 3D</button>
+              <button onClick={goToFoot3d} className="view3DBtn">ภาพ 3D</button>
             </div>
             {expandedDetail === index && (
               <div className="detailSteps">

@@ -34,16 +34,15 @@ export default function About() {
   }, []);
 
   const handleBack = () => {
-    router.push("/HomePage");
+    router.push("/HomePageUser");
   };
-
   const saveImageToDatabase = async () => {
     if (capturedImage && userId) {
       try {
-        const fileName = "imagefootleft1.png"; // Set desired file name
-
-        // Step 1: Save the image to the file system via API
-        const imageSaveResponse = await fetch("/api/saveImageToFile", {
+        const fileName = "imagefootleft1.png";
+  
+        // เรียกใช้ API อัปโหลดภาพใหม่
+        const imageSaveResponse = await fetch("/api/uploadFootImageToFolder", {
           method: "POST",
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify({
@@ -52,20 +51,21 @@ export default function About() {
             fileName,
           }),
         });
-        const { pathUrl } = await imageSaveResponse.json();
-
-        if (pathUrl) {
-          // Step 2: Save the path to the database
+  
+        const { imageUrl, success } = await imageSaveResponse.json();
+  
+        if (success && imageUrl) {
+          // บันทึกลิงก์ภาพลงในฐานข้อมูล
           const dbSaveResponse = await fetch("/api/saveFootImage", {
             method: "POST",
             headers: { "Content-Type": "application/json" },
             body: JSON.stringify({
               imageCategoryId: 1,
               side: "left",
-              pathUrl,
+              pathUrl: imageUrl,
             }),
           });
-
+  
           const dbSaveData = await dbSaveResponse.json();
           if (dbSaveData.id) {
             console.log("Image saved successfully with ID:", dbSaveData.id);
@@ -73,13 +73,15 @@ export default function About() {
           } else {
             console.error("Failed to save image to database:", dbSaveData);
           }
+        } else {
+          console.error("Failed to upload image:", imageUrl);
         }
       } catch (error) {
         console.error("Error saving image:", error);
       }
     }
   };
-
+  
   return (
     <main className={styles.main}>
       <FontAwesomeIcon icon={faArrowLeft} className={styles.backIcon} onClick={handleBack} />
@@ -87,8 +89,9 @@ export default function About() {
       {capturedImage && frameImage ? (
         <div className={styles.imageContainer}>
           <div className={styles.frameContainer}>
+          
+            <img src={capturedImage} alt="Captured" className={styles.capturedImage} />  
             <img src={frameImage} alt="Frame" className={styles.frameLine} />
-            <img src={capturedImage} alt="Captured" className={styles.capturedImage} />
           </div>
         </div>
       ) : (

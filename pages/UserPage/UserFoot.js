@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { useRouter } from "next/router";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faArrowLeft } from "@fortawesome/free-solid-svg-icons";
@@ -22,6 +22,43 @@ const UserFoot3D = () => {
   const router = useRouter();
   const [rotationAngle, setRotationAngle] = useState(Math.PI / 2);
   const [activeButton, setActiveButton] = useState("right");
+  const [profileImage, setProfileImage] = useState("/default-profile.png"); // เริ่มต้นด้วยภาพ default
+  const [userId, setUserId] = useState(null);
+  // ดึงข้อมูล session และ user profile
+ useEffect(() => {
+  const fetchSessionData = async () => {
+    try {
+      const sessionRes = await fetch("/api/getSession");
+      const sessionData = await sessionRes.json();
+
+      if (sessionRes.ok && sessionData.userId) {
+        setUserId(sessionData.userId);
+        fetchUserData(sessionData.userId); // ดึงข้อมูล user profile ตาม userId
+      }
+    } catch (error) {
+      console.error("Error fetching session:", error);
+    }
+  };
+
+  const fetchUserData = async (userId) => {
+    try {
+      const response = await fetch(`/api/user`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ userId: userId }),
+      });
+
+      if (response.ok) {
+        const data = await response.json();
+        setProfileImage(data[0].ProfileImage || "/default-profile.png");
+      }
+    } catch (error) {
+      console.error("Error fetching user data:", error);
+    }
+  };
+
+  fetchSessionData();
+}, []);
 
   const rotateLeft = () => {
     setRotationAngle(-Math.PI / 2);
@@ -43,7 +80,11 @@ const UserFoot3D = () => {
         />
         <div className="top-right-icon">
           <FontAwesomeIcon icon={faBell} className="notification-icon" />
-          <img src="/default-profile.png" alt="Profile" className="profile-pic" />
+          <img
+              src={profileImage}
+              alt="Profile"
+              className="profile-pic"
+            />
         </div>
       </div>
 

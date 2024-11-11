@@ -82,6 +82,7 @@
 }
 
 .capturedImage {
+  transform: scaleX(-1);
   object-fit: cover;
   margin: 20px;
   width: 250px;

@@ -47,7 +47,7 @@ const CompletePage = () => {
 
     const userIdNumber = parseInt(UserId, 10);
 
-    setIsLoading(true);
+    // setIsLoading(true);
     setMessage({ text: '' });
 
     try {
