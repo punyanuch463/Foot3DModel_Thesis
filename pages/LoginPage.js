@@ -33,12 +33,12 @@ const Login = () => {
 
   const handleNext = async () => {
     if (!formData.usernameOrEmail) {
-      setMessage({ text: 'เกิดข้อผิดพลาด: กรุณากรอก Email', type: 'error' });
+      setMessage({ text: 'ข้อผิดพลาด: กรุณากรอกอีเมล', type: 'error' });
       return;
     }
 
     if (!formData.UserPassWord) {
-      setMessage({ text: 'เกิดข้อผิดพลาด: กรุณากรอกรหัสผ่าน', type: 'error' });
+      setMessage({ text: 'ข้อผิดพลาด: กรุณากรอกรหัสผ่าน', type: 'error' });
       return;
     }
 
@@ -72,14 +72,14 @@ const Login = () => {
             router.push('/HomePage');
           }, 500);
         } else {
-          setMessage({ text: `เกิดข้อผิดพลาด: ${sessionData.message}`, type: 'error' });
+          setMessage({ text: `ข้อผิดพลาด: ${sessionData.message}`, type: 'error' });
         }
       } else {
-        setMessage({ text: `เกิดข้อผิดพลาด: ${loginData.message}`, type: 'error' });
+        setMessage({ text: `ข้อผิดพลาด: ${loginData.message}`, type: 'error' });
       }
     } catch (error) {
       console.error('Error:', error);
-      setMessage({ text: 'เกิดข้อผิดพลาดในการส่งข้อมูล', type: 'error' });
+      setMessage({ text: 'ข้อผิดพลาดในการส่งข้อมูล', type: 'error' });
     } finally {
       setIsLoading(false);
     }

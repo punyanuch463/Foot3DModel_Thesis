@@ -1,9 +1,8 @@
-// export default HomePage;
 "use client";
 import React, { useState, useEffect } from "react";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faBell, faClock } from "@fortawesome/free-regular-svg-icons";
-import { faChartBar, faUsers, faBoxOpen, faEnvelope, faArrowLeft, faChevronDown, faTimes, faLock} from "@fortawesome/free-solid-svg-icons";
+import { faEnvelope, faArrowLeft, faTimes, faLock, faShoePrints, faBook, faCircleInfo} from "@fortawesome/free-solid-svg-icons";
 import { PiScanFill } from "react-icons/pi";
 import { VscHome, VscAccount, VscSearch, VscHistory } from "react-icons/vsc";
 import { useRouter } from "next/router";
@@ -122,20 +121,20 @@ const HomePage = () => {
       {/* Content Menu */}
       <div className="content-menu">
         <div className="content-item">
-          <FontAwesomeIcon icon={faChartBar} className="content-icon" />
-          <span>สถิติ</span>
+          <FontAwesomeIcon icon={faShoePrints} className="content-icon" />
+          <span>ผลลัพธ์</span>
         </div>
         <div className="content-item">
-          <FontAwesomeIcon icon={faUsers} className="content-icon" />
-          <span>ผู้ใช้งาน</span>
-        </div>
-        <div className="content-item">
-          <FontAwesomeIcon icon={faBoxOpen} className="content-icon" />
-          <span>สินค้า</span>
+          <FontAwesomeIcon icon={faBook} className="content-icon" />
+          <span>คู่มือ</span>
         </div>
         <div className="content-item">
           <FontAwesomeIcon icon={faEnvelope} className="content-icon" />
           <span>จดหมาย</span>
+        </div>
+        <div className="content-item">
+          <FontAwesomeIcon icon={faCircleInfo} className="content-icon" />
+          <span>ประวัติ</span>
         </div>
         <div className="content-item">
           <FontAwesomeIcon icon={faLock} className="content-icon" />

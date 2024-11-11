@@ -63,11 +63,11 @@ const CreateAccount = () => {
           router.push('/SettingAcc');
         }, 500);
       } else {
-        setMessage({ text: `เกิดข้อผิดพลาดในการสร้างบัญชี: ${data.message}`, type: "error" });
+        setMessage({ text: `ข้อผิดพลาดในการสร้างบัญชี: ${data.message}`, type: "error" });
       }
     } catch (error) {
       console.error('Error:', error);
-      setMessage({ text: 'เกิดข้อผิดพลาดในการส่งข้อมูล', type: "error" });
+      setMessage({ text: 'ข้อผิดพลาดในการส่งข้อมูล', type: "error" });
     } finally {
       setIsLoading(false);
     }
@@ -75,19 +75,19 @@ const CreateAccount = () => {
 
   const handleMsg = () => {
     if (!formData.UserName) {
-      setMessage({ text: 'เกิดข้อผิดพลาด: กรุณากรอกข้อมูลชื่อ', type: "error" });
+      setMessage({ text: 'ข้อผิดพลาด: กรุณากรอกข้อมูลชื่อ', type: "error" });
       return;
     }
     if (!formData.UserEmail) {
-      setMessage({ text: 'เกิดข้อผิดพลาด: กรุณากรอกข้อมูลอีเมล', type: "error" });
+      setMessage({ text: 'ข้อผิดพลาด: กรุณากรอกข้อมูลอีเมล', type: "error" });
       return;
     }
     if (!formData.UserPassWord) {
-      setMessage({ text: 'เกิดข้อผิดพลาด: กรุณากรอกข้อมูลรหัสผ่าน', type: "error" });
+      setMessage({ text: 'ข้อผิดพลาด: กรุณากรอกข้อมูลรหัสผ่าน', type: "error" });
       return;
     }
     if (!formData.PhoneNumber) {
-      setMessage({ text: 'เกิดข้อผิดพลาด: กรุณากรอกข้อมูลเบอร์โทรศัพท์', type: "error" });
+      setMessage({ text: 'ข้อผิดพลาด: กรุณากรอกข้อมูลเบอร์โทรศัพท์', type: "error" });
       return;
     }
   };
@@ -121,7 +121,7 @@ const CreateAccount = () => {
             name="UserName" 
             value={formData.UserName} 
             onChange={handleChange} 
-            placeholder="กรุณากรอกชื่อผู้ใช้งาน"
+            // placeholder="กรุณากรอกชื่อผู้ใช้งาน"
             required 
           />
         </div>
@@ -135,7 +135,7 @@ const CreateAccount = () => {
             value={formData.UserEmail} 
             onChange={handleChange} 
             autoComplete="current-password"
-            placeholder="กรุณากรอกอีเมล"
+            // placeholder="กรุณากรอกอีเมล"
             required 
           />
         </div>
@@ -151,7 +151,7 @@ const CreateAccount = () => {
               onChange={handleChange} 
              autoComplete="current-password"
               required 
-              placeholder="กรุณากรอกรหัสผ่าน"
+              // placeholder="กรุณากรอกรหัสผ่าน"
             />
             <FontAwesomeIcon
               icon={passwordVisible ? faEyeSlash : faEye}
@@ -169,7 +169,7 @@ const CreateAccount = () => {
             name="PhoneNumber" 
             value={formData.PhoneNumber} 
             onChange={handleChange} 
-            placeholder="กรุณากรอกเบอร์โทร"
+            // placeholder="กรุณากรอกเบอร์โทร"
             required 
           />
         </div>

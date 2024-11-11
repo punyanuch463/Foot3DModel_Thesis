@@ -91,7 +91,8 @@ body {
 
 h1 {
   font-size: 24px;
-  margin-bottom: 20px;
+  margin-top: 16px;
+  margin-bottom: 16px;
   color: #333;
   font-family: "Sukhumvit Set", sans-serif;
 }
@@ -181,7 +182,7 @@ input[type="password"]:focus {
   color: white;
   border: none;
   border-radius: 20px;
-  margin-top: 160px;
+  margin-top: 48px;
   cursor: pointer;
   font-size: 16px;
 }
@@ -342,6 +343,11 @@ select.open {
   margin: 20px 0;
 }
 
+.checkbox-container span{
+  font-family: "Sukhumvit Set", sans-serif;
+  font-weight: 700;
+}
+
 .checkbox-label {
   display: flex;
   align-items: center;
@@ -411,33 +417,44 @@ select.open {
 
 /* HomePage*/
 /* styles/globals.css */
+.menuBar-container {
+  background-color: #ffffff; /* White background */
+  padding: 10px 0; /* Space around the menu bar */
+}
+
 .menuBar {
-  position: fixed;
-  bottom: 0;
-  width: 100%;
-  background-color: #fff;
   display: flex;
-  justify-content: space-around;
+  justify-content: space-around; /* Space out items evenly */
   align-items: center;
-  padding: 10px 0;
-  box-shadow: 0 -2px 5px rgba(0, 0, 0, 0.1);
 }
 
 .menuItem {
   display: flex;
-  flex-direction: column;
+  flex-direction: column; /* Stack icon and label vertically */
   align-items: center;
-  color: #102c57;
-  font-family: "Sukhumvit Set", sans-serif;
+  color: #102c57; /* Text color */
+  cursor: pointer;
+  font-weight: 500;
 }
 
 .menuItem p {
   margin-top: 5px;
-  font-size: 12px;
+  font-size: 14px; /* Adjust font size as needed */
 }
 
-.menuItem svg {
-  font-size: 24px;
+
+/* Optional: Styling for the scrollbar */
+.menuBar-container::-webkit-scrollbar {
+  width: 6px;
+}
+
+.menuBar-container::-webkit-scrollbar-thumb {
+  background-color: #888;
+  border-radius: 3px;
+}
+
+.menuBar-container::-webkit-scrollbar-thumb:hover {
+  background-color: #555;
 }
 
 .select-wrapper-setting {
@@ -463,7 +480,6 @@ select.open {
   display: grid; /* ใช้ grid layout แทน flex */
   grid-template-columns: repeat(2, 1fr); /* กำหนด 2 คอลัมน์ */
   gap: 20px; /* ระยะห่างระหว่างไอเท็ม */
-  margin-top: 20px; /* เพิ่มระยะห่างจากส่วนอื่น */
   padding: 24px;
 }
 
@@ -473,20 +489,31 @@ select.open {
   align-items: center; /* จัดให้อยู่กลาง */
   justify-content: center; /* จัดกลางแนวตั้ง */
   padding: 15px; /* Padding รอบๆ item */
-  padding-top: 50px;
-  padding-bottom: 50px;
+  padding-top: 40px;
+  padding-bottom: 40px;
   border-radius: 8px; /* มุมโค้ง */
   box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1); /* เงา */
-  background-color: #102c57; /* สีพื้นหลัง */
-  color: #fefaf6;
+  background-color: white; /* สีพื้นหลัง */
+  color: #102c57;
   transition: box-shadow 0.3s; /* เอฟเฟคตอน hover */
   font-size: 24px;
+  border: 2px solid #102c57; /* เส้นขอบ */
+}
+
+
+.content-item:hover {
+  background-color: #102c57; /* Optional hover effect */
+  color: white;
 }
 
 .content-icon {
   font-size: 40px; /* ขนาดของไอคอน */
   margin-bottom: 8px; /* ระยะห่างจากข้อความ */
-  color: #fefaf6; /* สีไอคอน */
+
+}
+
+.content-icon:hover {
+color: white;
 }
 
 /* HistoryPage */
@@ -1007,7 +1034,7 @@ select.open {
   margin-top: 0;
 }
 
-/* AdInfo */
+/* AdInfo
 
 .popup {
   position: fixed;
@@ -1015,11 +1042,11 @@ select.open {
   left: 0;
   right: 0;
   bottom: 0;
-  background-color: rgba(0, 0, 0, 0.5); /* พื้นหลังแบบโปร่งใส */
+  background-color: rgba(0, 0, 0, 0.5); 
   display: flex;
   align-items: center;
   justify-content: center;
-  z-index: 1000; /* ให้ป๊อปอัปอยู่ด้านหน้าสุด */
+  z-index: 1000; 
 }
 
 .popupContent {
@@ -1037,7 +1064,7 @@ select.open {
 .popupButtons button {
   margin: 0 10px;
   padding: 10px 20px;
-  background-color: #102c57; /* สีพื้นหลังของปุ่ม */
+  background-color: #102c57;
   color: white;
   border: none;
   border-radius: 4px;
@@ -1048,7 +1075,7 @@ select.open {
 .measurements-grid {
   display: grid;
   grid-template-columns: repeat(2, 1fr);
-  gap: 16px; /* ระยะห่างระหว่างกล่อง */
+  gap: 16px; 
   margin-top: 24px;
 }
 
@@ -1058,7 +1085,7 @@ select.open {
 }
 
 .measurement-field label {
-  margin-bottom: 4px; /* ระยะห่างระหว่าง label และ input */
+  margin-bottom: 4px; 
 }
 
 .foot-size-form__measurements {
@@ -1069,25 +1096,24 @@ select.open {
   background-color: #e0e0e0;
 }
 .measurement-field input {
-  /* สีพื้นฐานของ input */
-  background-color: lightgray; /* สีเทาเมื่อไม่สามารถแก้ไขได้ */
+  background-color: lightgray; 
   border: 1px solid #ccc;
   padding: 8px;
   border-radius: 4px;
 }
 
 .measurement-field input:focus {
-  border-color: #0070f3; /* สีของ border เมื่อ input ถูกเลือก */
+  border-color: #0070f3; 
 }
 
 .measurement-field input[readonly] {
-  background-color: #e0e0e0; /* สีเทาเมื่อไม่สามารถแก้ไขได้ */
-  cursor: not-allowed; /* เปลี่ยน cursor เพื่อแสดงว่าไม่สามารถแก้ไขได้ */
+  background-color: #e0e0e0; 
+  cursor: not-allowed;
   border-radius: 20px;
 }
 
 .measurement-field input:not([readonly]) {
-  background-color: white; /* สีขาวเมื่อสามารถแก้ไขได้ */
+  background-color: white; 
   border-radius: 20px;
 }
 
@@ -1097,10 +1123,9 @@ select.open {
 }
 
 .circle-button {
-  background-color: #102c57; /* สีปุ่ม */
   border: none;
   color: white;
-  border-radius: 50%; /* ทำให้ปุ่มเป็นวงกลม */
+  border-radius: 50%; 
   width: 30px;
   height: 30px;
   font-size: 16px;
@@ -1280,4 +1305,40 @@ select.open {
   flex-direction: column;
   align-items: center;
   justify-content: center;
+} */
+
+
+.canvas-container {
+  margin-top: 20px; /* เว้นระยะห่างจากปุ่ม */
+  text-align: center;
+}
+
+.footButtonContainer {
+  margin-top: 20px; /* เว้นระยะห่างจากหัวเรื่อง */
+  text-align: center;
+}
+
+
+.zoomButtonContainer {
+  position: absolute;
+  top: 50%;
+  right: 10px; /* วางปุ่มที่ขวาสุด */
+  transform: translateY(-50%); /* ให้วางตรงกลางแนวตั้ง */
+  display: flex;
+  flex-direction: column;
+  gap: 10px; /* เพิ่มช่องว่างระหว่างปุ่ม */
+}
+
+.zoomInButton, .zoomOutButton {
+  font-size: 24px;
+  padding: 10px;
+  background-color: #f0f0f0;
+  border: none;
+  border-radius: 50%;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+}
+
+.zoomInButton:hover, .zoomOutButton:hover {
+  background-color: #ddd;
 }
